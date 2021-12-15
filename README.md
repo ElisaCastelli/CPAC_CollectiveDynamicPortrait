@@ -15,7 +15,7 @@ Each participant will also be able to move his hand in front of the painting in 
 
 
 Group members: 
-*Francesco Zumerle 10801101
-Annafelicia Renzi 10801270
-Elisa Castelli 10615041
+* Francesco Zumerle 10801101
+* Annafelicia Renzi 10801270
+* Elisa Castelli 10615041
 
