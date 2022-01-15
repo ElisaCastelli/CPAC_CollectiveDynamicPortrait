@@ -13,6 +13,7 @@ app.config['SESSION_COOKIE_NAME'] = 'spotify-login-session'
 
 @app.route("/")
 def login():
+    global sp_oauth 
     sp_oauth = create_spotify_oauth()
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
@@ -26,25 +27,28 @@ def create_spotify_oauth():
 
 @app.route("/redirect")
 def authorize():
-    sp_oauth = create_spotify_oauth()
+    # sp_oauth = create_spotify_oauth()
     session.clear()
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
     session["token_info"] = token_info #metto le informazioni del token nella session
     return redirect("/getParameters")
 
-@app.route('/getParameters')
+@app.route('/getParameters', methods=['GET'])
 def getParameters():
     session['token_info'], authorized = get_token()
     session.modified = True
     if not authorized:
         return redirect('/')
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    #rsp.current_user_top_tracks(time_range='medium_term', limit=1, offset=0)
-    for track in sp.current_user_saved_tracks(limit=1, offset=0)["items"]:
-        track_uri = track["track"]["uri"]
-        track_features = sp.audio_features(track_uri)[0]
-    return track_features
+    track = sp.current_user_top_tracks(limit=1, offset=0, time_range="medium_term")["items"]
+    track_name = track[0]["name"]
+    track_URI = track[0]["uri"]
+    track_features = sp.audio_features(track_URI)[0]
+    acousticness = track_features["acousticness"]
+    valence = track_features["valence"]
+    params= {"TrackName":track_name, "Acousticness":acousticness, "Valence":valence}
+    return params
 
 def get_token():
     token_valid = False
