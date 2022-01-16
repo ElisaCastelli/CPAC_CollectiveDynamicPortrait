@@ -41,14 +41,15 @@ def getParameters():
     if not authorized:
         return redirect('/')
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-    track = sp.current_user_top_tracks(limit=1, offset=0, time_range="medium_term")["items"]
-    track_name = track[0]["name"]
-    track_URI = track[0]["uri"]
-    track_features = sp.audio_features(track_URI)[0]
-    acousticness = track_features["acousticness"]
-    valence = track_features["valence"]
-    params= {"TrackName":track_name, "Acousticness":acousticness, "Valence":valence}
-    return params
+    # track = sp.current_user_top_tracks(limit=1, offset=0, time_range="medium_term")["items"]
+    # track_name = track[0]["name"]
+    # track_URI = track[0]["uri"]
+    # track_features = sp.audio_features(track_URI)[0]
+    # acousticness = track_features["acousticness"]
+    # valence = track_features["valence"]
+    # params= {"TrackName":track_name, "Acousticness":acousticness, "Valence":valence}
+    user = sp.current_user()
+    return user #params
 
 def get_token():
     token_valid = False
