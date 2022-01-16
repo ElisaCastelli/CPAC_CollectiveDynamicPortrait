@@ -1,4 +1,5 @@
 from flask import Flask, redirect, url_for, request, session
+from flask_sqlalchemy import SQLAlchemy
 import spotipy
 import os
 import time
@@ -9,7 +10,10 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 app.secret_key = "IU86bytdtb72boLAui"
 app.config['SESSION_COOKIE_NAME'] = 'spotify-login-session'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:andres123@localhost/CPAC'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+db = SQLAlchemy(app)
 
 @app.route("/")
 def login():
@@ -44,7 +48,34 @@ def getParameters():
     for track in sp.current_user_saved_tracks(limit=1, offset=0)["items"]:
         track_uri = track["track"]["uri"]
         track_features = sp.audio_features(track_uri)[0]
-    return track_features
+        track_id = track_features["id"]
+        song = sp.track(track_id)
+        track_name = song["name"]
+        track_artist = song["artists"][0]["name"]
+        val = track_features["valence"]
+        acoustic = track_features["acousticness"]
+        params = {"acousticness": acoustic, "valence": val}
+
+    write_db(params)
+    return params
+
+class Values(db.Model):
+    pos = db.Column(db.Integer)
+    val_acousticness = db.Column(db.Integer, nullable=False, primary_key=True)
+    val_valence = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, val_acousticness, val_valence):
+        self.val_acousticness = val_acousticness
+        self.val_valence = val_valence
+
+def write_db(values):
+    acousticness = values["acousticness"]
+    valence = values["valence"]
+    
+    entry = Values(acousticness, valence)
+
+    db.session.add(entry)
+    db.session.commit()
 
 def get_token():
     token_valid = False
@@ -63,3 +94,8 @@ def get_token():
 
     token_valid = True
     return token_info, token_valid
+
+
+if __name__ == '__main__':
+    db.create_all()
+    app.run()
