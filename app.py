@@ -1,5 +1,4 @@
 from flask import Flask, redirect, url_for, request, session, jsonify
-from osc_test import getParams
 import spotipy
 import os
 import time
@@ -58,7 +57,6 @@ def getParameters():
         return redirect('/')
 
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
-<<<<<<< HEAD
     
     # track = sp.current_user_top_tracks(limit=1, offset=0, time_range="medium_term")["items"]
     # track_name = track[0]["name"]
@@ -72,17 +70,6 @@ def getParameters():
     global w_msg
     w_msg = "Welcome " + user["display_name"]
     return w_msg #user #params
-=======
-    track = sp.current_user_top_tracks(limit=1, offset=0, time_range="short_term")["items"]
-    #track = sp.current_user_recently_played(limit=3)["items"]
-    track_name = track[0]["name"]
-    track_URI = track[0]["uri"]
-    track_features = sp.audio_features(track_URI)[0]
-    acousticness = track_features["acousticness"]
-    valence = track_features["valence"]
-    params= {"TrackName":track_name, "Acousticness":acousticness, "Valence":valence}
-    return params
->>>>>>> 7b734d9cf06d5b35e057f9d11b3b2d98efd5a6bf
 
 def get_token():
     token_valid = False
