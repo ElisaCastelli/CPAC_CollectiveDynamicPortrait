@@ -39,7 +39,7 @@ def create_spotify_oauth():
             client_id="49e612edb8144e78befdfceaf0612429",
             client_secret="73fab72888874b4483f74f64ffad137c",
             redirect_uri=url_for('authorize', _external=True),
-            scope="user-library-read")
+            scope="user-top-read")
 
 @app.route("/redirect")
 def authorize():
@@ -58,6 +58,7 @@ def getParameters():
         return redirect('/')
 
     sp = spotipy.Spotify(auth=session.get('token_info').get('access_token'))
+<<<<<<< HEAD
     
     # track = sp.current_user_top_tracks(limit=1, offset=0, time_range="medium_term")["items"]
     # track_name = track[0]["name"]
@@ -71,6 +72,17 @@ def getParameters():
     global w_msg
     w_msg = "Welcome " + user["display_name"]
     return w_msg #user #params
+=======
+    track = sp.current_user_top_tracks(limit=1, offset=0, time_range="short_term")["items"]
+    #track = sp.current_user_recently_played(limit=3)["items"]
+    track_name = track[0]["name"]
+    track_URI = track[0]["uri"]
+    track_features = sp.audio_features(track_URI)[0]
+    acousticness = track_features["acousticness"]
+    valence = track_features["valence"]
+    params= {"TrackName":track_name, "Acousticness":acousticness, "Valence":valence}
+    return params
+>>>>>>> 7b734d9cf06d5b35e057f9d11b3b2d98efd5a6bf
 
 def get_token():
     token_valid = False
