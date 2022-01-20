@@ -20,9 +20,6 @@ int textAlpha=100;
 
 void settings(){
   size(displayWidth,displayHeight,P3D);
-  
-
-
 }
 
 
@@ -83,27 +80,24 @@ void textFade(){
 
 
 void draw() {
-    background(0);
-    textFade();
-    textSize(60);
-    fill(153,51,102,textAlpha);
-    //textFont(f);
-    text(s,displayWidth/4,displayHeight/2);
+  background(0);
+  textFade();
+  textSize(60);
+  fill(153,51,102,textAlpha);
+  //textFont(f);
+  text(s,displayWidth/4,displayHeight/2);
 
- 
- 
-if(value==0){
-  background(256);
-// plot one part for each image
-for(int index=0; index<img.length;index++){
-  for(int image=0;image<img.length;image++){
-    // for now just follow sequential order
-    if (index == image)
-      image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
-  }
-}
-  }
-  
+  if(value==0){
+    background(256);
+    // plot one part for each image
+    for(int index=0; index<img.length;index++){
+      for(int image=0;image<img.length;image++){
+        // for now just follow sequential order
+        if (index == image)
+          image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
+      }
+    }
+  } 
 }
 
 

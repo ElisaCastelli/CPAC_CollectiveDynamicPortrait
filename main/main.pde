@@ -16,7 +16,7 @@ void mousePressed(){
 String sep = System.getProperty("file.separator");
 
 void doExec(){
-Process p = exec("python test.py");
+Process p = exec("python ." + sep +"test.py");
  try {
    int result = p.waitFor();
    println("the process returned " + result);
