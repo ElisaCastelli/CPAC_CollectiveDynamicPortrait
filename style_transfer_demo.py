@@ -18,9 +18,12 @@ image_folder = 'style_pics/'
 # here I should receive parameters from spotify
 #acousticness = 1
 #valence = 1
+#content_filename = 'dummy_cropped.jpg'
 import sys
-acousticness = int(sys.argv[1])
-valence = int(sys.argv[2])
+
+acousticness = float(sys.argv[1])
+valence = float(sys.argv[2])
+content_filename = sys.argv[3]
 
 def style_chooser(acousticness, valence):
     if acousticness >= 0.5 and valence >= 0.5 :
@@ -38,7 +41,7 @@ def style_chooser(acousticness, valence):
 
 style_filename = style_chooser(acousticness, valence)
 # insert here the image you want to apply style transfer to
-content_filename = 'dummy_cropped.jpg'
+
 print('style_filename: ' + style_filename + '\ncontent_filename: ' + content_filename)
 
 
@@ -103,6 +106,7 @@ output.save(image_folder + 'stylized' +style_filename)
 tensor_to_image(stylized_image)
 
 # free gpu memory
+'''
 from numba import cuda
 
 cuda.select_device(0)
@@ -113,5 +117,5 @@ import os
 os._exit(00)
 
 
-
+'''
 
