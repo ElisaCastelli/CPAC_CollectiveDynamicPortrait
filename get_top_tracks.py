@@ -17,7 +17,7 @@ class GetUserTopTracks:
     
     def get_top_tracks(self):
         """Search For the top Song"""
-        query = "https://api.spotify.com/v1/me/top/tracks?limit=1"
+        query = "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5"
         response = requests.get(
             query,
             headers={
@@ -70,57 +70,35 @@ class GetUserTopTracks:
         response_json = response.json()
         user = response_json["display_name"]
 
+        print(user)
+
         return user
 
 
 def sendvalues(unused_addr):
     cp = GetUserTopTracks()
+    cp.get_user_profile()
     acousticness, valence = cp.get_track_features()
 
-    msg = str("acousticness: {} \nvalence: {}".format(acousticness, valence))
+    msg = [acousticness, valence]
   
     client.send_message("/mousepressed", "{}".format(msg))
 
 
 def login():
-    # global sp_oauth 
-    # sp_oauth, access_token = create_spotify_oauth()
-
-    cid = '413809fc6a6a4d4aadff06f7a9176b94'
-    secret = '58ac47fad3784cf193becfd7b99bcc9a'
+    cid = '49e612edb8144e78befdfceaf0612429'
+    secret = '73fab72888874b4483f74f64ffad137c'
     client_credentials_manager = SpotifyClientCredentials(
         client_id=cid, client_secret=secret)
     token = client_credentials_manager.get_access_token()
-    access_token = token["access_token"]
+    # access_token =  token["access_token"]
+    access_token =  input("Enter your token: ")
 
     return access_token
-
-    # return access_token
-
-# def create_spotify_oauth():
-#     sp_oauth_init = SpotifyOAuth(
-#                 client_id="49e612edb8144e78befdfceaf0612429",
-#                 client_secret="73fab72888874b4483f74f64ffad137c",
-#                 redirect_uri="authorize",
-#                 scope="user-top-read")
-    
-#     access_token = authorize(sp_oauth_init)
-
-#     return sp_oauth_init, access_token
-
-# def authorize(sp_oauth):
-#     token_info = sp_oauth.get_access_token()
-#     access_token = token_info["access_token"]
-#     return access_token
 
 
 
 if __name__ == '__main__':
-    cp = GetUserTopTracks()
-    cp.get_user_profile()
-    cp.get_track_features()
-
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip", default="127.0.0.1",
         help="The ip of the OSC server")

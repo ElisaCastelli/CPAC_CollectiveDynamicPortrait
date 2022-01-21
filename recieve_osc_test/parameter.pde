@@ -7,9 +7,18 @@ class SpotifyParameter{
   SpotifyParameter(String message){
     int length = message.length();
      int parsePosition = message.indexOf(",");
-     acousticness = float(message.substring(1,parsePosition-1));
-     valence = float(message.substring(parsePosition+2, length-1 ));
-     
+     this.acousticness = float(message.substring(1,parsePosition));
+     this.valence = float(message.substring(parsePosition+2, length-1 ));
+     //print(acousticness);
+     //print(valence);
+  }
+  
+  float getAcousticness(){
+    return acousticness;
+  }
+  
+  float getValence(){
+    return valence;
   }
   
 }

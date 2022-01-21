@@ -2,7 +2,7 @@
 import oscP5.*;
 import netP5.*;
 String value1;
-ArrayList<SpotifyParameter> spotifyParameters;
+ArrayList<SpotifyParameter> array_values;
 
 
 // To forskellige OSC objekter, til at sende hver deres besked:
@@ -13,6 +13,8 @@ void setup() {
   size(400,400);
   frameRate(25);
   oscP5 = new OscP5(this,4321);
+  
+  array_values = new ArrayList<SpotifyParameter>();
 
   myRemoteLocation = new NetAddress("127.0.0.1", 6543);
 }
@@ -44,7 +46,11 @@ void mousePressed(){
 void oscEvent(OscMessage theOscMessage) {
   // Således ser det ud for modtagelse af kun én OSC besked:
   value1 = theOscMessage.get(0).stringValue();
+
   SpotifyParameter sp = new SpotifyParameter(value1);
-  spotifyParameters.add(sp);
-  print(value1);
+
+  array_values.add(sp);
+  
+  print(array_values.size());
+  
 }
