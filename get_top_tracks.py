@@ -6,7 +6,7 @@ from pythonosc import udp_client
 from pythonosc import osc_server
 from pythonosc import dispatcher
 
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 client = udp_client.SimpleUDPClient("127.0.0.1", 4321)
 
@@ -67,25 +67,35 @@ def sendvalues(unused_addr):
 
 
 def login():
-    global sp_oauth 
-    sp_oauth, access_token = create_spotify_oauth()
+    # global sp_oauth 
+    # sp_oauth, access_token = create_spotify_oauth()
+
+    cid = '413809fc6a6a4d4aadff06f7a9176b94'
+    secret = '58ac47fad3784cf193becfd7b99bcc9a'
+    client_credentials_manager = SpotifyClientCredentials(
+        client_id=cid, client_secret=secret)
+    token = client_credentials_manager.get_access_token()
+    access_token = token["access_token"]
+
     return access_token
 
-def create_spotify_oauth():
-    sp_oauth_init = SpotifyOAuth(
-                client_id="49e612edb8144e78befdfceaf0612429",
-                client_secret="73fab72888874b4483f74f64ffad137c",
-                redirect_uri="authorize",
-                scope="user-top-read")
+    # return access_token
+
+# def create_spotify_oauth():
+#     sp_oauth_init = SpotifyOAuth(
+#                 client_id="49e612edb8144e78befdfceaf0612429",
+#                 client_secret="73fab72888874b4483f74f64ffad137c",
+#                 redirect_uri="authorize",
+#                 scope="user-top-read")
     
-    access_token = authorize(sp_oauth_init)
+#     access_token = authorize(sp_oauth_init)
 
-    return sp_oauth_init, access_token
+#     return sp_oauth_init, access_token
 
-def authorize(sp_oauth):
-    token_info = sp_oauth.get_access_token()
-    access_token = token_info["access_token"]
-    return access_token
+# def authorize(sp_oauth):
+#     token_info = sp_oauth.get_access_token()
+#     access_token = token_info["access_token"]
+#     return access_token
 
 
 
