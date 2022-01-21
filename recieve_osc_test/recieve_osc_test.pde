@@ -2,6 +2,8 @@
 import oscP5.*;
 import netP5.*;
 String value1;
+ArrayList<SpotifyParameter> spotifyParameters;
+
 
 // To forskellige OSC objekter, til at sende hver deres besked:
 OscP5 oscP5;
@@ -42,5 +44,7 @@ void mousePressed(){
 void oscEvent(OscMessage theOscMessage) {
   // Således ser det ud for modtagelse af kun én OSC besked:
   value1 = theOscMessage.get(0).stringValue();
+  SpotifyParameter sp = new SpotifyParameter(value1);
+  spotifyParameters.add(sp);
   print(value1);
 }
