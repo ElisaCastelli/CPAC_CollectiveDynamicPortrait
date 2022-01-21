@@ -55,6 +55,22 @@ class GetUserTopTracks:
         print("acousticness: {} \nvalence: {}".format(acousticness, valence))
 
         return acousticness, valence
+    
+    def get_user_profile(self):
+        """Search For the user logged in"""
+        query = "https://api.spotify.com/v1/me"
+        response = requests.get(
+            query,
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer {}".format(self.spotify_token)
+            }
+        )
+        response_json = response.json()
+        user = response_json["display_name"]
+
+        return user
 
 
 def sendvalues(unused_addr):
@@ -101,6 +117,7 @@ def login():
 
 if __name__ == '__main__':
     cp = GetUserTopTracks()
+    cp.get_user_profile()
     cp.get_track_features()
 
 
