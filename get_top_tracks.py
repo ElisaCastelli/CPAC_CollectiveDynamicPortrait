@@ -1,3 +1,4 @@
+from lib2to3.pgen2 import token
 import requests
 
 import argparse
@@ -5,12 +6,14 @@ from pythonosc import udp_client
 from pythonosc import osc_server
 from pythonosc import dispatcher
 
+from spotipy.oauth2 import SpotifyOAuth
+
 client = udp_client.SimpleUDPClient("127.0.0.1", 4321)
 
 
 class GetUserTopTracks:
     def __init__(self):
-        self.spotify_token = "BQApH5N_52oxSm-_LpvRXWFB1oOqphpqciK5z-DrSjHet2WLm3Az98KXC20bQtv29zVIPki6TogH2OKnEmyHQWZlR5SL9DY1o__cgUlJ7CVLAFsPwZBT3NR4YfxFQg0nJ3FIVL0KgVCyw1xrx82Hs6WEMoQ5ALTSQCadh_MOOsRgDSPXF6R_7zSDUSfYXX51VKc-jYftVEnsclsEdotb3KKCp1Tu_c8-nlcLirf5C5A"
+        self.spotify_token = login()
     
     def get_top_tracks(self):
         """Search For the top Song"""
@@ -62,8 +65,28 @@ def sendvalues(unused_addr):
   
     client.send_message("/mousepressed", "{}".format(msg))
 
-def getParams():
-    return 123
+
+def login():
+    global sp_oauth 
+    sp_oauth, access_token = create_spotify_oauth()
+    return access_token
+
+def create_spotify_oauth():
+    sp_oauth_init = SpotifyOAuth(
+                client_id="49e612edb8144e78befdfceaf0612429",
+                client_secret="73fab72888874b4483f74f64ffad137c",
+                redirect_uri="authorize",
+                scope="user-top-read")
+    
+    access_token = authorize(sp_oauth_init)
+
+    return sp_oauth_init, access_token
+
+def authorize(sp_oauth):
+    token_info = sp_oauth.get_access_token()
+    access_token = token_info["access_token"]
+    return access_token
+
 
 
 if __name__ == '__main__':
