@@ -30,11 +30,11 @@ def style_chooser(acousticness, valence):
     if acousticness >= 0.5 and valence >= 0.5 :
         return 'monet_poppy.jpg'
     elif acousticness < 0.5 and valence >= 0.5:
-        return 'bosch_garden.jpg'
+        return 'journey.jpg'
     elif acousticness >= 0.5 and valence < 0.5 :
         return 'van_gogh_patate.jpg'
     elif acousticness < 0.5 and valence < 0.5 :
-        return 'cyberpunk_2077.jpg'
+        return 'pixel_art.jpg'
     else:
         return 'error'
 
@@ -102,7 +102,7 @@ stylized_image = hub_module(tf.constant(content_image), tf.constant(style_image)
 output = tensor_to_image(stylized_image)
 
 # save image result 
-output.save(image_folder + 'stylized2' +style_filename) 
+output.save(image_folder + 'stylized' +style_filename) 
 
 tensor_to_image(stylized_image)
 
