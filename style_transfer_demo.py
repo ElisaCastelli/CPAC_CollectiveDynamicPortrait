@@ -6,6 +6,7 @@ import PIL
 import keras
 import tensorflow as tf
 import tensorflow_hub as hub
+import os
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
@@ -104,6 +105,15 @@ output = tensor_to_image(stylized_image)
 output.save(image_folder + 'stylized' +style_filename) 
 
 tensor_to_image(stylized_image)
+
+# return exit status
+print("exit status (checking if everything went fine):")
+if os.path.exists(image_folder + 'stylized' +style_filename):
+    print(0)
+else:
+    print(1)
+
+
 
 # free gpu memory
 '''

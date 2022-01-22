@@ -1,6 +1,7 @@
 import argparse
 import random
 import time
+import os
 
 from pythonosc import osc_message_builder
 from pythonosc import udp_client
@@ -9,25 +10,31 @@ from pythonosc import dispatcher
 
 client = udp_client.SimpleUDPClient("127.0.0.1", 1234)
 
-# The function now has 4 parameters as it receives messageID and the messages (here 3) that are included.
-def sendvalues(unused_addr, message1, message2, message3):
+# function for handling style transfer requests
+def run_style_transfer(message_id, acousticness, valence, content_image):
 # format is used to format the numbers for string values instead of objects:
-    print(unused_addr,"OSC ID")
+    print(message_id,"OSC ID")
+    print("acousticness -> ", acousticness)
+    print("valence -> ", valence)
+    print("content image -> ", content_image)
+
+    process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + content_image).read()
+    # check that the last character (actually, last two to be sure) is the exit status 0
+    if int(process_out[-2:]) == 0:
+        print('style transfer completed!')
+        client.send_message("/mousepressed", "0")
+    elif int(process_out[-2:]) == 1:
+        print('something went wrong during style transfer: missing stylized picture')
+        client.send_message("/mousepressed", "1")
+    else:
+        print('something went terribly wrong. go check the code NOW')
+        client.send_message("/mousepressed", "2")
+    
+
+# for now useless
+def other_receiver(message_id, message1):
+    print(message_id,"OSC ID")
     print(message1,"first message")
-    print(message2,"second message")
-    print(message3,"third message")
-
-    for x in range(10):
-        client.send_message("/mousepressed", "{}".format(random.random()))
-        time.sleep(1)
-        if x == 9:
-            break
-
-def sendothervalues(unused_addr, message1):
-
-    print(unused_addr,"OSC ID")
-    print(message1,"first message")
-
     client.send_message("/keypressed", "vuf")
 
 if __name__ == "__main__":
@@ -42,8 +49,8 @@ if __name__ == "__main__":
 
     # This links a messageID to a function. 
     # That is, when a message with a given ID is received, the given function is run:
-    dispatcher.map("/miklo",sendvalues)
-    dispatcher.map("/miklokey",sendothervalues)
+    dispatcher.map("/style",run_style_transfer)
+    dispatcher.map("/other",other_receiver)
 
     
     server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)

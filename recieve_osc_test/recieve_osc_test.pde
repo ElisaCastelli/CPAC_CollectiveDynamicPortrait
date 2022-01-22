@@ -16,7 +16,7 @@ void setup() {
   
   array_values = new ArrayList<SpotifyParameter>();
 
-  myRemoteLocation = new NetAddress("127.0.0.1", 6543);
+  myRemoteLocation = new NetAddress("127.0.0.1", 5005);
 }
 
 void draw() {
@@ -36,8 +36,29 @@ void draw() {
     }
 }
 
+
+/*
+Processing flowchart:
+- click per partecipare                             DONE
+- qrcode appare                                     ? not needed
+- processing riceve valori spotify                  confermare elisa/andres
+- esecuzione foto                                      TODO
+- applicazione ritaglio,                               TODO
+                divisione,                             TODO
+                style transfer                      DONE
+- aggiornamento quadro, attesa per successivo click    TODO
+
+*/
+
+//here I added the style transfer request: before and after that we need to add the missing parts(read above):
 void mousePressed(){
-  OscMessage myMessage = new OscMessage("/miklo");
+  
+  // show qr code? maybe not for now
+  
+  OscMessage myMessage = new OscMessage("/style");
+  myMessage.add("0");
+  myMessage.add("0");
+  myMessage.add("dummy_cropped.jpg");
 
   /* Hvad der sendes, og hvor til */
   oscP5.send(myMessage, myRemoteLocation);
