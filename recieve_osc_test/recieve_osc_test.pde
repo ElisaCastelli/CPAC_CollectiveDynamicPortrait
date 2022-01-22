@@ -8,6 +8,7 @@ import processing.video.*;
 
 // To forskellige OSC objekter, til at sende hver deres besked:
 OscP5 oscP5;
+OscP5 oscP5_spotify;
 NetAddress myRemoteLocation;
 
 
@@ -16,7 +17,8 @@ Capture cam;
 void setup() {
   size(400,400);
   frameRate(25);
-  oscP5 = new OscP5(this,4321);
+  oscP5 = new OscP5(this, 4321);
+  oscP5_spotify = new OscP5(this, 4321);
   
   array_values = new ArrayList<SpotifyParameter>();
 
@@ -71,9 +73,14 @@ Processing flowchart:
 
 */
 
-//here I added the style transfer request: before and after that we need to add the missing parts(read above):
 void mousePressed(){
-  
+  OscMessage myMessage = new OscMessage("/spotify");
+  oscP5_spotify.send(myMessage, myRemoteLocation);
+}
+
+//here I added the style transfer request: before and after that we need to add the missing parts(read above):
+void keyPressed(){
+  if (key == '\n' ) {
   // show qr code? maybe not for now
   
   // spitify values handling...
@@ -95,7 +102,7 @@ void mousePressed(){
   
   // check returned message to check everything went fine
   
-  
+  }
 }
 
 void oscEvent(OscMessage theOscMessage) {
