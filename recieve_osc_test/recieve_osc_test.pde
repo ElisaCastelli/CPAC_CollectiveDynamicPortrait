@@ -3,11 +3,15 @@ import oscP5.*;
 import netP5.*;
 String value1;
 ArrayList<SpotifyParameter> array_values;
+import processing.video.*;
 
 
 // To forskellige OSC objekter, til at sende hver deres besked:
 OscP5 oscP5;
 NetAddress myRemoteLocation;
+
+
+Capture cam;
 
 void setup() {
   size(400,400);
@@ -17,6 +21,23 @@ void setup() {
   array_values = new ArrayList<SpotifyParameter>();
 
   myRemoteLocation = new NetAddress("127.0.0.1", 5005);
+  
+  String[] cameras = Capture.list();
+  
+  if (cameras.length == 0) {
+    println("There are no cameras available for capture.");
+    exit();
+  } else {
+    println("Available cameras:");
+    for (int i = 0; i < cameras.length; i++) {
+      println(cameras[i]);
+    }
+    
+    // The camera can be initialized directly using an 
+    // element from the array returned by list():
+    cam = new Capture(this, cameras[0]);
+    cam.start();     
+  }
 }
 
 void draw() {
@@ -55,10 +76,17 @@ void mousePressed(){
   
   // show qr code? maybe not for now
   
+  //take photo, ANNA SISTEMA TU COL METODO MIGLIORE
+  if (cam.available() == true) {
+    cam.read();
+  }
+  image(cam, 0, 0);
+  save("current_photo.jpg");
+  // send stylized photo
   OscMessage myMessage = new OscMessage("/style");
   myMessage.add("0");
   myMessage.add("0");
-  myMessage.add("dummy_cropped.jpg");
+  myMessage.add("current_photo.jpg");
 
   /* Hvad der sendes, og hvor til */
   oscP5.send(myMessage, myRemoteLocation);
