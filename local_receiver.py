@@ -21,14 +21,16 @@ def run_style_transfer(message_id, acousticness, valence, content_image):
     process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + content_image).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
+        client.send_message("/mousepressed", "ciaoo")
         print('style transfer completed!')
-        client.send_message("/mousepressed", "0")
     elif int(process_out[-2:]) == 1:
-        print('something went wrong during style transfer: missing stylized picture')
         client.send_message("/mousepressed", "1")
+        print('something went wrong during style transfer: missing stylized picture')
+
     else:
-        print('something went terribly wrong. go check the code NOW')
         client.send_message("/mousepressed", "2")
+        print('something went terribly wrong. go check the code NOW')
+
     
 
 # for now useless

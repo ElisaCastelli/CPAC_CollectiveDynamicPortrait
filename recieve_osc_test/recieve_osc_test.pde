@@ -88,14 +88,18 @@ void mousePressed(){
   myMessage.add("0");
   myMessage.add("current_photo.jpg");
 
-  /* Hvad der sendes, og hvor til */
+  /* Send photo and params to style_transfer script */
   oscP5.send(myMessage, myRemoteLocation);
+  
+  // check returned message to check everything went fine
+  
+  
 }
 
 void oscEvent(OscMessage theOscMessage) {
   // Således ser det ud for modtagelse af kun én OSC besked:
   value1 = theOscMessage.get(0).stringValue();
-
+  println("value1: " + value1);
   SpotifyParameter sp = new SpotifyParameter(value1);
 
   array_values.add(sp);
