@@ -76,6 +76,8 @@ void mousePressed(){
   
   // show qr code? maybe not for now
   
+  // spitify values handling...
+  
   //take photo, ANNA SISTEMA TU COL METODO MIGLIORE
   if (cam.available() == true) {
     cam.read();
