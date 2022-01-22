@@ -10,16 +10,16 @@ import processing.video.*;
 OscP5 oscP5;
 OscP5 oscP5_spotify;
 NetAddress myRemoteLocation;
-
-
+PFont font;
 Capture cam;
 
+
 void setup() {
-  size(400,400);
+  size(600,400);
   frameRate(25);
   oscP5 = new OscP5(this, 4321);
   oscP5_spotify = new OscP5(this, 4321);
-  
+  font =createFont("GOGOIA-Regular.ttf",50);
   array_values = new ArrayList<SpotifyParameter>();
 
   myRemoteLocation = new NetAddress("127.0.0.1", 5005);
@@ -43,19 +43,24 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  
+  //ho provato a copiare quello di Anna con l'animazione ma mi dava errore
+  background(255);
+  textAlign(CENTER);
+  textFont(font);
+  noStroke();
+  fill(44,100,172);
+  textSize(50);
+  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/7);
+  textSize(30);
+  text("Click here to start!", width/2, height/2);
+
    if(value1 != null){
-    textAlign(CENTER);
-    fill(200);
-    stroke(255);
-    textSize(15);
-    text("Random værdier fra Python:", width/2, height/2+100);
-    textSize(20);
-    text(float(value1)*10, width/2, height/2+120);
-    noStroke();
-    fill(255,0,0);
-    ellipse(200,120,float(value1)*width,height*float(value1));
-    
+      textAlign(CENTER);
+      textSize(35);
+      noStroke();
+      fill(44,100,172);
+      text("Press ENTER to take your photo!", width/2, height/2);
     }
 }
 
@@ -64,7 +69,7 @@ void draw() {
 Processing flowchart:
 - click per partecipare                             DONE
 - qrcode appare                                     ? not needed
-- processing riceve valori spotify                  confermare elisa/andres
+- processing riceve valori spotify                  DONE
 - esecuzione foto                                      TODO
 - applicazione ritaglio,                               TODO
                 divisione,                             TODO
@@ -81,21 +86,18 @@ void mousePressed(){
 //here I added the style transfer request: before and after that we need to add the missing parts(read above):
 void keyPressed(){
   if (key == '\n' ) {
-  // show qr code? maybe not for now
-  
-  // spitify values handling...
-  
-  //take photo, ANNA SISTEMA TU COL METODO MIGLIORE
-  if (cam.available() == true) {
-    cam.read();
-  }
-  image(cam, 0, 0);
-  save("current_photo.jpg");
-  // send stylized photo
-  OscMessage myMessage = new OscMessage("/style");
-  myMessage.add("0");
-  myMessage.add("0");
-  myMessage.add("current_photo.jpg");
+
+    //take photo, ANNA SISTEMA TU COL METODO MIGLIORE
+    if (cam.available() == true) {
+      cam.read();
+    }
+    image(cam, 0, 0);
+    save("current_photo.jpg");
+    // send stylized photo
+    OscMessage myMessage = new OscMessage("/style");
+    myMessage.add((array_values.get(array_values.size()-1)).getAcousticness()); //prendo l'acousticness dell'ultima coppia di valori aggiunti
+    myMessage.add((array_values.get(array_values.size()-1)).getValence());  //prendo la valence dell'ultima coppia di valori aggiunti
+    myMessage.add("current_photo.jpg");
 
   /* Send photo and params to style_transfer script */
   oscP5.send(myMessage, myRemoteLocation);
@@ -106,13 +108,11 @@ void keyPressed(){
 }
 
 void oscEvent(OscMessage theOscMessage) {
-  // Således ser det ud for modtagelse af kun én OSC besked:
+  
+  //leggo i valori ricevuti
   value1 = theOscMessage.get(0).stringValue();
-  println("value1: " + value1);
+  println("Spotify parameters: " + value1);
   SpotifyParameter sp = new SpotifyParameter(value1);
-
   array_values.add(sp);
-  
-  print(array_values.size());
-  
+ 
 }
