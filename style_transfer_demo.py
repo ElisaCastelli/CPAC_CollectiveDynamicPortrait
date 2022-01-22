@@ -7,6 +7,7 @@ import keras
 import tensorflow as tf
 import tensorflow_hub as hub
 import os
+import sys
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
@@ -20,7 +21,6 @@ image_folder = 'style_pics/'
 #acousticness = 1
 #valence = 1
 #content_filename = 'dummy_cropped.jpg'
-import sys
 
 acousticness = float(sys.argv[1])
 valence = float(sys.argv[2])
@@ -102,7 +102,7 @@ stylized_image = hub_module(tf.constant(content_image), tf.constant(style_image)
 output = tensor_to_image(stylized_image)
 
 # save image result 
-output.save(image_folder + 'stylized' +style_filename) 
+output.save(image_folder + 'stylized2' +style_filename) 
 
 tensor_to_image(stylized_image)
 
