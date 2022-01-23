@@ -31,6 +31,8 @@ Consequently, the user will press enter in order to communicate to Python that h
 Finally, when the style transfer is applied the final modified picture is saved and a portion of it will be shown in Processing.
 This process can be repeated everytime a new user wants to partecipate and contribute to the final artwork.
 
+![Possible final result](readme_images/possibleFinalResult.png)
+
 Group members: 
 * Francesco Zumerle 10801101
 * Annafelicia Renzi 10801270
