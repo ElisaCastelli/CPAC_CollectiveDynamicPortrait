@@ -24,7 +24,7 @@ Each participant will also be able to move his hand in front of the painting in 
 
 ## Demo:
 
-The first demo developed works in a local way with a server Python which communicates with the Processing application using the OSC protocol, as shown in the workflow's picture. 
+The first demo developed works in a local way with a server Python which communicates with the Processing application using the OSC protocol, as shown in the workflow's picture. Currently the part regarding sound and Supercollider has not already been implemented.
 
 ![Workflow](readme_images/workFlow.png)
 
