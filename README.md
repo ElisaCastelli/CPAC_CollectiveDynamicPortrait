@@ -10,6 +10,8 @@ The first person will move in front of the empty portrait  and, using his smartp
 Consequently, the screen will start showing a portion of the person’s face in the center, processed with a style based on his Spotify account. 
 The style used in the style transfer process will be chosen accordingly to the acousticness and the valence values of the top track associated to the user's Spotify account.
 
+![Spotify to Style](readme_images/spotifyStyleAssociation.png)
+
 In particular:
 * The higher the acousticness, the more classic will be the style applied and viceversa the lower the acousticness, the more modern will be the style applied.
 * The higher the valence, the warmer the colour present in the style and the lower the valence, the darker the colour used in the style.
