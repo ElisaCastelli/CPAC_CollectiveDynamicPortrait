@@ -43,7 +43,6 @@ ArrayList<SpotifyParameter> participants_spotify_values;
 
 /* communication */
 OscP5 oscP5;
-OscP5 oscP5_spotify;
 NetAddress myRemoteLocation;
 
 /* font */
@@ -51,44 +50,40 @@ PFont font;
 
 boolean style_done = false;
 boolean new_user_arrived = true;
+boolean mouse_first_click = false;
+boolean photo_taken = false;
 
 void setup() {
-  size(1920,1080,P3D);
-  frameRate(25);
+  size(displayWidth,displayHeight,P3D);
+  frameRate(10);
   oscP5 = new OscP5(this, 4321);
-  oscP5_spotify = new OscP5(this, 4321);
-  font =createFont("GOGOIA-Regular.ttf",50);
+  font =createFont("GOGOIA-Regular.ttf",200);
   participants_spotify_values = new ArrayList<SpotifyParameter>();
 
   myRemoteLocation = new NetAddress("127.0.0.1", 5005);
-  
-  
-  //updatePortrait();
 }
 
 void draw() {
   
   if (new_user_arrived){
-    println("user arruived");
     background(255);
     textAlign(CENTER);
     textFont(font);
     noStroke();
     fill(44,100,172);
-    textSize(50);
-    text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/7);
-    textSize(30);
+    textSize(200);
+    text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/6);
+    textSize(120);
     text("Click here to start!", width/2, height/2);
   }
 
    if(message_receiver != null){
-     println("message received");
       background(255);
       textAlign(CENTER);
-      textSize(35);
+      textSize(120);
       noStroke();
       fill(44,100,172);
-      text("Press ENTER to participate!", width/2, height/2);
+      text("Press ENTER and say Cheese...!", width/2, height/2);
     }
     
    if (style_done){
@@ -103,28 +98,47 @@ void draw() {
        }
      }
    }
+   
+   if (mouse_first_click){
+      background(255);
+      textAlign(CENTER);
+      textSize(120);
+      noStroke();
+      fill(44,100,172);
+      text("go check the server's command line", width/2, height/2);
+   }
+   
+   if (photo_taken){
+      background(255);
+      textAlign(CENTER);
+      textSize(120);
+      noStroke();
+      fill(44,100,172);
+      text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, height/2);
+   }
+   
     
 }
 
 
-void mousePressed(){
+void mouseClicked(){
   
   if(message_receiver == null && new_user_arrived){
     new_user_arrived = false;
     style_done = false;
     OscMessage myMessage = new OscMessage("/spotify");
-    oscP5_spotify.send(myMessage, myRemoteLocation);
+    oscP5.send(myMessage, myRemoteLocation);
+    mouse_first_click = true;
+    
   }
   if (style_done){
     new_user_arrived = true;
   }
 }
 
-//here I added the style transfer request: before and after that we need to add the missing parts(read above):
 void keyPressed(){
-  if (key == '\n' ) {
-    
-    
+    // only enter is accepted
+    if (key == '\n' ) {
     
     // ask python to take photo
     OscMessage myMessage = new OscMessage("/photo");
@@ -133,17 +147,15 @@ void keyPressed(){
     
     // for final project is better to wait for message from python server
     // wait until face file is created
-    println("I'm");
     try{
       do{
-        println("... waiting ...");
         delay(1000);
       } while(! fileExistsCaseSensitive(str(participants_spotify_values.size()) + "_face.jpg"));
     }
     catch (Exception e){
       println("error: " + e);
     }
-    println("image found!");
+    photo_taken = true;
     
     // send stylized photo
     myMessage = new OscMessage("/style");
@@ -152,14 +164,8 @@ void keyPressed(){
     myMessage.add(str(participants_spotify_values.size()) + "_face.jpg");
 
     /* Send photo and params to style_transfer script */
-    oscP5.send(myMessage, myRemoteLocation);
-  
-    // check returned message to check everything went fine
-    
+    oscP5.send(myMessage, myRemoteLocation);    
   }
-  
-  
-    //message_receiver = null;
 }
 
 void oscEvent(OscMessage theOscMessage) {
@@ -167,7 +173,6 @@ void oscEvent(OscMessage theOscMessage) {
   if(theOscMessage.checkAddrPattern("/photo_return")==true){
     message_receiver = null;
   }
-  
   
   // I know, it's horrible, but I don't trust java
   if(theOscMessage.checkAddrPattern("/spotify_return")==true){
@@ -178,8 +183,10 @@ void oscEvent(OscMessage theOscMessage) {
     println("Spotify parameters: " + message_receiver);
     SpotifyParameter sp = new SpotifyParameter(message_receiver);
     participants_spotify_values.add(sp);
+    mouse_first_click = false;
   }
   if(theOscMessage.checkAddrPattern("/style_return")==true){
     style_done = true;
+    photo_taken = false;
   }
 }

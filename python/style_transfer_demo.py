@@ -31,13 +31,13 @@ if not os.path.exists(image_folder + content_filename):
     sys.exit()
 
 def style_chooser(acousticness, valence):
-    if acousticness >= 0.5 and valence >= 0.5 :
+    if acousticness >= 0.2 and valence >= 0.5 :
         return 'monet_poppy.jpg'
-    elif acousticness < 0.5 and valence >= 0.5:
+    elif acousticness < 0.2 and valence >= 0.5:
         return 'journey.jpg'
-    elif acousticness >= 0.5 and valence < 0.5 :
+    elif acousticness >= 0.2 and valence < 0.5 :
         return 'van_gogh_patate.jpg'
-    elif acousticness < 0.5 and valence < 0.5 :
+    elif acousticness < 0.2 and valence < 0.5 :
         return 'pixel_art.jpg'
     else:
         return 'error'
