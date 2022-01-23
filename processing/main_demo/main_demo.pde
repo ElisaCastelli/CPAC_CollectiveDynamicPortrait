@@ -41,7 +41,6 @@ ArrayList<SpotifyParameter> participants_spotify_values;
 
 
 
-
 /* communication */
 OscP5 oscP5;
 OscP5 oscP5_spotify;
@@ -51,11 +50,10 @@ NetAddress myRemoteLocation;
 PFont font;
 
 boolean style_done = false;
+boolean new_user_arrived = true;
 
 void setup() {
   size(1920,1080,P3D);
-  int img_height = displayHeight / 2;
-  int img_width= displayHeight / 2;
   frameRate(25);
   oscP5 = new OscP5(this, 4321);
   oscP5_spotify = new OscP5(this, 4321);
@@ -64,62 +62,27 @@ void setup() {
 
   myRemoteLocation = new NetAddress("127.0.0.1", 5005);
   
-  img=new PImage[n_images];
-  small_images=new PImage[total_parts*n_images];
   
-  // for each image
-  for(int image=0; image < img.length; image++){
-    if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
-      img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
-    }
-    else {
-      img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
-    }
-    // int img_height=img[image].height;
-    //int img_width=img[image].width;
-    
-    
-    img[image].resize(img_width,img_height);
-    //debug
-    //println("small_images length: " + small_images.length);
-    
-    pos_image=new PVector[total_parts];
-    
-    int spacing_x=2;
-    int spacing_y=2;
-    int index=0;
-    
-    int small_images_width=img_width/N_IMAGE_X;
-    int small_images_height=img_height/N_IMAGE_Y;
-    //for each pair of x-y coordinates
-    for(int y=0;y< N_IMAGE_Y; y++){
-      for(int x=0;x< N_IMAGE_X; x++){
-        // add current image part to small_images
-        small_images[index + total_parts*image]=img[image].get(x*small_images_width,  y*small_images_height,  small_images_width,  small_images_height);
-        pos_image[index]= new PVector(displayWidth/2 - img_width*N_IMAGE_X/4 + x *(small_images_width + spacing_x), displayHeight/2 - img_height*N_IMAGE_Y/4 +  y *(small_images_height + spacing_y));
-        //debug
-        //println("index: " + index);
-        index++;
-      
-      }
-    } 
-  }
+  //updatePortrait();
 }
 
 void draw() {
   
-  //ho provato a copiare quello di Anna con l'animazione ma mi dava errore
-  background(255);
-  textAlign(CENTER);
-  textFont(font);
-  noStroke();
-  fill(44,100,172);
-  textSize(50);
-  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/7);
-  textSize(30);
-  text("Click here to start!", width/2, height/2);
+  if (new_user_arrived){
+    println("user arruived");
+    background(255);
+    textAlign(CENTER);
+    textFont(font);
+    noStroke();
+    fill(44,100,172);
+    textSize(50);
+    text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/7);
+    textSize(30);
+    text("Click here to start!", width/2, height/2);
+  }
 
    if(message_receiver != null){
+     println("message received");
       background(255);
       textAlign(CENTER);
       textSize(35);
@@ -129,7 +92,8 @@ void draw() {
     }
     
    if (style_done){
-     background(0);
+     updatePortrait();
+     background(255);
      // plot one part for each image
      for(int index=0; index<img.length;index++){
        for(int image=0;image<img.length;image++){
@@ -145,10 +109,14 @@ void draw() {
 
 void mousePressed(){
   
-  if(message_receiver == null){
+  if(message_receiver == null && new_user_arrived){
+    new_user_arrived = false;
     style_done = false;
     OscMessage myMessage = new OscMessage("/spotify");
     oscP5_spotify.send(myMessage, myRemoteLocation);
+  }
+  if (style_done){
+    new_user_arrived = true;
   }
 }
 
@@ -188,10 +156,6 @@ void keyPressed(){
   
     // check returned message to check everything went fine
     
-    println("hi");
-    delay(3000);
-    println("hey");
-    style_done = true;
   }
   
   
@@ -200,10 +164,22 @@ void keyPressed(){
 
 void oscEvent(OscMessage theOscMessage) {
   
-  //leggo i valori ricevuti
-  message_receiver = theOscMessage.get(0).stringValue();
-  println("Spotify parameters: " + message_receiver);
-  SpotifyParameter sp = new SpotifyParameter(message_receiver);
-  participants_spotify_values.add(sp);
- 
+  if(theOscMessage.checkAddrPattern("/photo_return")==true){
+    message_receiver = null;
+  }
+  
+  
+  // I know, it's horrible, but I don't trust java
+  if(theOscMessage.checkAddrPattern("/spotify_return")==true){
+    
+    //leggo i valori ricevuti
+    message_receiver = theOscMessage.get(0).stringValue();
+    
+    println("Spotify parameters: " + message_receiver);
+    SpotifyParameter sp = new SpotifyParameter(message_receiver);
+    participants_spotify_values.add(sp);
+  }
+  if(theOscMessage.checkAddrPattern("/style_return")==true){
+    style_done = true;
+  }
 }

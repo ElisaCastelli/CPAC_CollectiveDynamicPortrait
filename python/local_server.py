@@ -86,7 +86,7 @@ def sendvalues(unused_addr):
 
     msg = [acousticness, valence]
   
-    client.send_message("/mousepressed", "{}".format(msg))
+    client.send_message("/spotify_return", "{}".format(msg))
 
 
 def login():
@@ -116,14 +116,14 @@ def run_style_transfer(message_id, acousticness, valence, content_image):
     process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + content_image).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
-        client.send_message("/keypressed", "0")
+        client.send_message("/style_return", "0")
         print('style transfer completed!')
     elif int(process_out[-2:]) == 1:
-        client.send_message("/keypressed", "1")
+        client.send_message("/style_return", "1")
         print('something went wrong during style transfer: missing stylized picture')
 
     else:
-        client.send_message("/keypressed", "2")
+        client.send_message("/style_return", "2")
         print('something went terribly wrong. go check the code NOW')
 
     
@@ -136,16 +136,16 @@ def run_take_photo(message_id, participant_id):
     process_out = os.popen('python take_photo_demo.py ' + str(participant_id)).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
-        client.send_message("/keypressed", "0")
+        client.send_message("/photo_return", "0")
         print('photo taken and face obtained!')
     elif int(process_out[-2:]) == 1:
-        client.send_message("/keypressed", "1")
+        client.send_message("/photo_return", "1")
         print('something went wrong with the camera')
     elif int(process_out[-2:]) == 2:
-        client.send_message("/keypressed", "2")
+        client.send_message("/photo_return", "2")
         print('something went terribly wrong. go check the code NOW')
     else:
-        client.send_message("/keypressed", "3")
+        client.send_message("/photo_return", "3")
         print('face not detected')
 
 if __name__ == "__main__":
