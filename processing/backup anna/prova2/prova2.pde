@@ -1,6 +1,6 @@
 // number of rows/columns of division
-final int N_IMAGE_X=3;
-final int N_IMAGE_Y=1;
+final int N_IMAGE_X=2;
+final int N_IMAGE_Y=2;
 final int total_parts=N_IMAGE_X * N_IMAGE_Y;
 // for now number of images coincides with total parts
 final int n_images=total_parts;
@@ -36,7 +36,7 @@ void setup(){
  // int img_height=img[image].height;
   //int img_width=img[image].width;
   
-  int img_height=500;
+  int img_height=1000;
   int img_width=1000;
   
   
