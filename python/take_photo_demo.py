@@ -18,7 +18,7 @@ face_cascade = cv2.CascadeClassifier('C:\\Users\\franc\\anaconda3\\envs\\tf-gpu\
 
 
 # path where images are stored
-image_folder = 'style_pics/'
+image_folder = '../pictures/'
 file_id = sys.argv[1]
 
 def take_photo(filename='photo.jpg', quality=0.8):
