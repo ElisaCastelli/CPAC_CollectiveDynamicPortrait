@@ -28,7 +28,6 @@ final int N_IMAGE_X=2;
 final int N_IMAGE_Y=2;
 final int total_parts=N_IMAGE_X * N_IMAGE_Y;
 // for now number of images coincides with total parts
-final int n_images=total_parts;
 
 PImage[] small_images;
 PVector[] pos_image;
