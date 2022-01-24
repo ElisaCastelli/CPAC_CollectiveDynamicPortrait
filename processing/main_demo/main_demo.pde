@@ -7,7 +7,7 @@ Processing flowchart:
 - applicazione ritaglio,                            DONE
                 divisione,                          DONE
                 style transfer                      DONE
-- aggiornamento quadro, attesa per successivo click    TODO
+- aggiornamento quadro, attesa per successivo click DONE
 
 
 altri TODO:
@@ -64,7 +64,7 @@ void setup() {
 }
 
 void draw() {
-  
+
   if (new_user_arrived){
     background(255);
     textAlign(CENTER);
@@ -85,10 +85,15 @@ void draw() {
       fill(44,100,172);
       text("Press ENTER and say Cheese...!", width/2, height/2);
     }
-    
+
    if (style_done){
      updatePortrait();
      background(255);
+     textAlign(CENTER);
+     textSize(120);
+     noStroke();
+     fill(44,100,172);
+     text("A new person arrives... Double click if you want to join!", width/2, height/6); // aggiungo la frase in alto sopra le foto
      // plot one part for each image
      for(int index=0; index<img.length;index++){
        for(int image=0;image<img.length;image++){
@@ -98,7 +103,7 @@ void draw() {
        }
      }
    }
-   
+
    if (mouse_first_click){
       background(255);
       textAlign(CENTER);
@@ -107,7 +112,7 @@ void draw() {
       fill(44,100,172);
       text("go check the server's command line", width/2, height/2);
    }
-   
+
    if (photo_taken){
       background(255);
       textAlign(CENTER);
@@ -116,8 +121,8 @@ void draw() {
       fill(44,100,172);
       text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, height/2);
    }
-   
-    
+
+
 }
 
 
