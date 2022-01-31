@@ -15,7 +15,7 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 # ## variables and style mapping
 
 # path where images are stored
-image_folder = 'style_pics/'
+image_folder = '../pictures/'
 
 # here I should receive parameters from spotify
 #acousticness = 1
@@ -26,15 +26,19 @@ acousticness = float(sys.argv[1])
 valence = float(sys.argv[2])
 content_filename = sys.argv[3]
 
+if not os.path.exists(image_folder + content_filename):
+    print(1)
+    sys.exit()
+
 def style_chooser(acousticness, valence):
-    if acousticness >= 0.5 and valence >= 0.5 :
+    if acousticness >= 0.2 and valence >= 0.5 :
         return 'monet_poppy.jpg'
-    elif acousticness < 0.5 and valence >= 0.5:
-        return 'bosch_garden.jpg'
-    elif acousticness >= 0.5 and valence < 0.5 :
+    elif acousticness < 0.2 and valence >= 0.5:
+        return 'journey.jpg'
+    elif acousticness >= 0.2 and valence < 0.5 :
         return 'van_gogh_patate.jpg'
-    elif acousticness < 0.5 and valence < 0.5 :
-        return 'cyberpunk_2077.jpg'
+    elif acousticness < 0.2 and valence < 0.5 :
+        return 'pixel_art.jpg'
     else:
         return 'error'
 
@@ -102,14 +106,16 @@ stylized_image = hub_module(tf.constant(content_image), tf.constant(style_image)
 output = tensor_to_image(stylized_image)
 
 # save image result 
-output.save(image_folder + 'stylized2' +style_filename) 
+output.save(image_folder + 'stylized' + content_filename) 
 
 tensor_to_image(stylized_image)
 
 # return exit status
 print("exit status (checking if everything went fine):")
-if os.path.exists(image_folder + 'stylized' +style_filename):
+if os.path.exists(image_folder + 'stylized' + content_filename):
     print(0)
+    # remove cropped file for processing check
+    os.remove(image_folder + content_filename) 
 else:
     print(1)
 
