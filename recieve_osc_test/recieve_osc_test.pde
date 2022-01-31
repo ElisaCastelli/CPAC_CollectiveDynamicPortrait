@@ -49,7 +49,7 @@ void draw() {
     fill(200);
     stroke(255);
     textSize(15);
-    text("Random værdier fra Python:", width/2, height/2+100);
+    //text("Random værdier fra Python:", width/2, height/2+100);
     textSize(20);
     text(float(value1)*10, width/2, height/2+120);
     noStroke();
@@ -93,8 +93,8 @@ void keyPressed(){
   save("current_photo.jpg");
   // send stylized photo
   OscMessage myMessage = new OscMessage("/style");
-  myMessage.add("0");
-  myMessage.add("0");
+  myMessage.add(array_values.get(array_values.size()-1).getAcousticness());
+  myMessage.add(array_values.get(array_values.size()-1).getValence());
   myMessage.add("current_photo.jpg");
 
   /* Send photo and params to style_transfer script */
