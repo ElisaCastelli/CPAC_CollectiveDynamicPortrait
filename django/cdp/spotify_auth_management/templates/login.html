@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="col-md-12 text-center">
+        <!-- <a class="btn btn-primary" href="/get-auth-url">Login</a> -->
+        <button id="login">Login</button>
+    </div>
+</div>
+
+<script>
+    spotifyAuthenticated = false;
+
+    document.getElementById("login").onclick = function() {
+        fetch("/is-authenticated")
+        // fetch("/get-auth-url")
+        //   .then((r) => console.log(r));
+          .then((response) => response.json())
+          .then((data) => {
+            spotifyAuthenticated = data.status;
+            console.log(data.status);
+            if (!data.status) {
+              fetch("/get-auth-url")
+                .then((response) => response.json())
+                .then((data) => {
+                  window.location.replace(data.url);
+                });
+            }
+          });
+    }
+</script>
