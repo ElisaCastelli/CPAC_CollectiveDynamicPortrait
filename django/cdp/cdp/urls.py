@@ -15,7 +15,7 @@ Including another URLconf
 """
 from argparse import Namespace
 from django.urls import include, path
-from spotify_auth_management.views import AuthURL, spotify_callback, index, IsAuthenticated
+from spotify_auth_management.views import *
 
 app_name = 'cdp'
 
@@ -23,5 +23,6 @@ urlpatterns = [
     path('', index.as_view(), name='index'),
     path('get-auth-url', AuthURL.as_view(), name='get-auth-url'),
     path('redirect', spotify_callback),
-    path('is-authenticated', IsAuthenticated.as_view())
+    path('is-authenticated', IsAuthenticated.as_view()),
+    path('top-track', TopTrack.as_view())
 ]

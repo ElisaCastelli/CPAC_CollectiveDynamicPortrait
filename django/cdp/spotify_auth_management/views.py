@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework import status
 from rest_framework.response import Response
-from .util import is_spotify_authenticated, update_or_create_user_tokens
+from .util import *
 from django.views import generic
 
 #from the front end we call this API end point then we redirect to the url, 
@@ -68,3 +68,22 @@ class IsAuthenticated(APIView):
     if not is_authenticated:
       return redirect('get-auth-url')
     return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+
+
+class TopTrack(APIView):
+
+  def get(self, request, format=None):
+    endpointTopTrack = "me/top/tracks?time_range=short_term&limit=1"
+    response = execute_spotify_api_request(request.session.session_key,endpoint=endpointTopTrack)
+    artist = response["items"][0]["artists"][0]["name"]
+    song = response["items"][0]["name"]
+    uri = response["items"][0]["id"]
+
+    endpointFeaturesByURI = "audio-features/{}".format(uri)
+    response = execute_spotify_api_request(request.session.session_key,endpoint=endpointFeaturesByURI)
+    #responseFeaturesByURI_json = response.json()
+    acousticness = response["acousticness"]
+    valence = response["valence"]
+    values = {'Acousticness': acousticness, 'Valence': valence}
+    print(values)
+    return Response({'status': values}, status=status.HTTP_200_OK)
