@@ -22,7 +22,14 @@
                 .then((data) => {
                   window.location.replace(data.url);
                 });
-            }
+            } else {
+              fetch("/top-track")
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(data)
+                  // window.location.replace(data.url);
+                });
+            } 
           });
     }
 </script>

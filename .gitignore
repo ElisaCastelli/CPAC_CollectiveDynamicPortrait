@@ -1,0 +1,5 @@
+.cache
+.DS_Store
+__pycache__/
+django/cdp/cdp/__pycache__/
+django/cdp/spotify_auth_management/__pycache__
