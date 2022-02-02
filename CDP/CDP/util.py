@@ -12,10 +12,11 @@ def get_user_tokens(session_id):
     else:
         return None
 
+# function to create or refresh user token
 def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
     tokens = get_user_tokens(session_id)
     print(tokens)
-    expires_in = timezone.now() + timedelta(seconds=expires_in)
+    expires_in = timezone.now() + timedelta(seconds=expires_in) 
     print(expires_in)
 
     if tokens:
@@ -28,7 +29,8 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens = SpotifyToken(user=session_id, access_token=access_token, refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
         tokens.save()
 
-def is_spotify_authenticated(session_id):
+# function to check if the time is over
+def is_spotify_authenticated(session_id): 
     tokens = get_user_tokens(session_id)
     if tokens:
         expiry = tokens.expires_in
@@ -39,9 +41,10 @@ def is_spotify_authenticated(session_id):
 
     return False
 
-def refresh_spotify_token(session_id):
+# function to refresh the token when time is expired
+def refresh_spotify_token(session_id): 
     refresh_token = get_user_tokens(session_id).refresh_token
-
+    
     response = post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
