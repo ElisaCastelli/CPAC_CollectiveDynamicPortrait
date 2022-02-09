@@ -1,5 +1,7 @@
-from .models import SpotifyToken
+from .models import SpotifyToken, MessageValues
+from urllib.parse import parse_qs
 from django.utils import timezone
+from django.http import JsonResponse
 from datetime import timedelta
 from .credentials import CLIENT_ID, CLIENT_SECRET
 from requests import post, put, get
@@ -77,3 +79,22 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
         return response.json()
     except:
         return {'Error': 'Issue with request'}
+
+def send_msg(request):
+    try:
+        query = parse_qs( request.META["QUERY_STRING"])
+        # your code to save color
+        obj=MessageValues.objects.create(text=query["text"][0])
+        obj.save()
+        response={"status":"ok", "message":"ok"}
+    except Exception as exc:
+        response={"status":"fail", "message":str(exc)}
+    return JsonResponse(response)
+
+def get_msgs(request):
+    texts=MessageValues.objects.all()
+    response={"msgs":[]}
+    for text in texts:
+        response["msgs"].append(text.text)
+    # your code to get color
+    return JsonResponse(response)
