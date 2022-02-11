@@ -37,14 +37,14 @@ class Fluid {
     this.diff = diffusion;
     this.visc = viscosity;
 
-    this.s = new float[N*N];
-    this.density = new float[N*N];
+    this.s = new float[N*M];
+    this.density = new float[N*M];
 
-    this.Vx = new float[N*N];
-    this.Vy = new float[N*N];
+    this.Vx = new float[N*M];
+    this.Vy = new float[N*M];
 
-    this.Vx0 = new float[N*N];
-    this.Vy0 = new float[N*N];
+    this.Vx0 = new float[N*M];
+    this.Vy0 = new float[N*M];
   }
 
   void step() {
@@ -84,15 +84,16 @@ class Fluid {
     this.Vy[index] += amountY;
   }
 
+//CHANGE COLOR
   void renderD() {
     colorMode(HSB, 255);
 
     for (int i = 0; i < N; i++) {
-      for (int j = 0; j < N; j++) {
+      for (int j = 0; j < M; j++) {
         float x = i * SCALE;
         float y = j * SCALE;
         float d = this.density[IX(i, j)];
-        fill((d + 50) % 255,200,d);
+        fill((d + 50) % 255,100,d); //hue saturation brightness 
         noStroke();
         square(x, y, SCALE);
       }
@@ -102,7 +103,7 @@ class Fluid {
   void renderV() {
 
     for (int i = 0; i < N; i++) {
-      for (int j = 0; j < N; j++) {
+      for (int j = 0; j < M; j++) {
         float x = i * SCALE;
         float y = j * SCALE;
         float vx = this.Vx[IX(i, j)];

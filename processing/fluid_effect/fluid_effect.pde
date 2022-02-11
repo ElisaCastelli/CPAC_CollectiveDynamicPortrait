@@ -9,15 +9,19 @@
 // Fluid Simulation for Dummies by Mike Ash
 // https://mikeash.com/pyblog/fluid-simulation-for-dummies.html
 
-final int N = 128;
+final int N = 1920;
+final int M = 1080;
 final int iter = 16;
-final int SCALE = 4;
+final int SCALE = 3;
 float t = 0;
 
 Fluid fluid;
 
 void settings() {
-  size(N*SCALE, N*SCALE);
+  size(N*SCALE, M*SCALE);
+  println(displayWidth);
+    println(displayHeight);
+  
 }
 
 void setup() {
@@ -29,17 +33,20 @@ void setup() {
 
 void draw() {
   background(0);
+  //cambia la posizione del coso in mezzo che genera il fluido 
   int cx = int(0.5*width/SCALE);
   int cy = int(0.5*height/SCALE);
   for (int i = -1; i <= 1; i++) {
     for (int j = -1; j <= 1; j++) {
-      fluid.addDensity(cx+i, cy+j, random(50, 150));
+      fluid.addDensity(cx+i, cy+j, random(50, 100));//densità del fluido, se diminuisco il range, viene più effetto fumo (initial one: 50, 150);
     }
   }
-  for (int i = 0; i < 2; i++) {
+  
+  //CHANGE TIMING 
+  for (int i = 0; i < 5; i++) {
     float angle = noise(t) * TWO_PI * 2;
     PVector v = PVector.fromAngle(angle);
-    v.mult(0.2);
+    v.mult(0.09);
     t += 0.01;
     fluid.addVelocity(cx, cy, v.x, v.y );
   }
