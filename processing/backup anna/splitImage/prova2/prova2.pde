@@ -26,6 +26,8 @@ float timePast;
 int textFade=2;
 int textAlpha=100;
 PImage qrcodeImage;
+PImage frame;
+float transparency=0;
 
 
 
@@ -85,8 +87,15 @@ void setup(){
   println(total_parts);
   n_images=n_users;
   
+   //size of the face images
+ int img_height = displayHeight / 2;
+  int img_width= displayHeight / 2;
+  //cornice
+  frame=loadImage("frame1.jpg");
+  frame.resize(img_width+220,img_height+220);
   
   qrcodeImage= loadImage("QRCODE.jpg");
+  //scritta 
   timePast=millis();
   timeInterval=2000.0f;
   
@@ -96,9 +105,7 @@ void setup(){
  for(int image=0;image<img.length;image++){
    img[image]=loadImage(str(image) + ".jpg");
    
-   //size of the face images
- int img_height = displayHeight / 2;
-  int img_width= displayHeight / 2;
+  
   
   img[image].resize(img_width,img_height);
   
@@ -151,12 +158,14 @@ if(value==0){
   background(255);
   //image(qrcodeImage,displayWidth/2-qrcodeImage.width,  displayHeight/2-qrcodeImage.height,  500,500); 
 // plot one part for each image
-
+image(frame,pos_image[0].x-110, pos_image[0].y-110);
 for(int index=0; index<img.length;index++){
   for(int image=0;image<img.length;image++){
     // for now just follow sequential order
     if (index == image)
-      image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
+     
+     image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
+      
   }
 }
 

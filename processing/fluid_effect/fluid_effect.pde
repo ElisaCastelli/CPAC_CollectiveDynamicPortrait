@@ -9,22 +9,22 @@
 // Fluid Simulation for Dummies by Mike Ash
 // https://mikeash.com/pyblog/fluid-simulation-for-dummies.html
 
-final int N = 1920;
-final int M = 1080;
+final int N = 200;
 final int iter = 16;
-final int SCALE = 3;
+final int SCALE = 4;
 float t = 0;
 
 Fluid fluid;
 
 void settings() {
-  size(N*SCALE, M*SCALE);
-  println(displayWidth);
-    println(displayHeight);
+
+  size(N*SCALE, N*SCALE);
+  
   
 }
 
 void setup() {
+ 
   fluid = new Fluid(0.2, 0, 0.0000001);
 }
 
