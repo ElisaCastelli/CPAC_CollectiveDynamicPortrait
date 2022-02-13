@@ -156,6 +156,7 @@ void draw() {
  
 if(value==0){
   background(255);
+  //image(qrcodeImage,10,10);
   //image(qrcodeImage,displayWidth/2-qrcodeImage.width,  displayHeight/2-qrcodeImage.height,  500,500); 
 // plot one part for each image
 image(frame,pos_image[0].x-110, pos_image[0].y-110);

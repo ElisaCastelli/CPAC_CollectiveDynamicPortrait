@@ -33,6 +33,7 @@ PImage[] small_images;
 PVector[] pos_image;
 PImage[] img;
 
+
 /* spotify */
 
 String message_receiver;
@@ -46,6 +47,10 @@ NetAddress myRemoteLocation;
 
 /* font */
 PFont font;
+float timeInterval;
+float timePast;
+int textFade=4;
+int textAlpha=200;
 
 boolean style_done = false;
 boolean new_user_arrived = true;
@@ -55,11 +60,22 @@ boolean photo_taken = false;
 void setup() {
   size(displayWidth,displayHeight,P3D);
   frameRate(10);
+  timePast=millis();
+  timeInterval=2000.0f;
+  
   oscP5 = new OscP5(this, 4321);
   font =createFont("GOGOIA-Regular.ttf",200);
   participants_spotify_values = new ArrayList<SpotifyParameter>();
 
   myRemoteLocation = new NetAddress("127.0.0.1", 5005);
+}
+
+void textFade(){
+  if(millis()>timeInterval+timePast){
+  timePast=millis();
+  textFade*=-1;
+  }
+  textAlpha+=textFade;
 }
 
 void draw() {
@@ -73,6 +89,8 @@ void draw() {
     textSize(200);
     text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/6);
     textSize(120);
+    textFade();
+    fill(44,100,172,textAlpha);
     text("Click here to start!", width/2, height/2);
   }
 
