@@ -80,11 +80,11 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     except:
         return {'Error': 'Issue with request'}
 
-def send_msg(request):
+def send_msg(request, acousticness, valence):
     try:
-        query = parse_qs( request.META["QUERY_STRING"])
+        #query = parse_qs( request.META["QUERY_STRING"])
         # your code to save color
-        obj=MessageValues.objects.create(text=query["text"][0])
+        obj=MessageValues.objects.create(acousticness=acousticness, valence=valence)
         obj.save()
         response={"status":"ok", "message":"ok"}
     except Exception as exc:

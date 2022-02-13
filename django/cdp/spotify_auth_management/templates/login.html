@@ -1,13 +1,47 @@
-<div class="container">
-    <div class="col-md-12 text-center">
-        <!-- <a class="btn btn-primary" href="/get-auth-url">Login</a> -->
-        <button id="login">Login</button>
-    </div>
-</div>
-
-<script>
+<html>
+  <head>
+    <title>Collective Dynamic Portrait</title>
+    <link href='https://fonts.googleapis.com/css?family=K2D' rel='stylesheet'>
+    <style>
+      h1 {
+          font-family: 'K2D';font-size: 48px;
+      }
+      h2 {
+        font-family: 'K2D';font-size: 20px;
+      }
+      .welcome{
+        position:absolute;
+        height: 100%;
+        width:100%;
+      }
+  
+      .welcomeForm{
+        position:relative;
+        width:auto;
+        height:auto;
+        top:30%;
+        text-align: center;
+        background-color: #92a8d1;
+      }
+  
+      #login{
+        font-family: 'K2D';font-size: 20px;
+      }
+      </style>
+  </head>
+  <body>
+      <div class="welcome">
+        <div class="welcomeForm">
+          <h1>Collective Dynamic Portrait</h1>
+          <h2>Click here below to start contributing to our portrait</h2>
+          <h2>You will be asked to give us the authorization to use your Spotify's data</h2>
+          <!-- <a class="btn btn-primary" href="/get-auth-url">Login</a> -->
+          <button id="login">Start!</button>
+        </div>
+      </div>
+  </body>
+  <script>  
     spotifyAuthenticated = false;
-
     document.getElementById("login").onclick = function() {
         fetch("/is-authenticated")
         // fetch("/get-auth-url")
@@ -32,4 +66,6 @@
             } 
           });
     }
-</script>
+  </script>
+</html>
+
