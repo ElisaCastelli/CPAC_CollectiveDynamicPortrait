@@ -87,6 +87,11 @@ class TopTrack(APIView):
     #responseFeaturesByURI_json = response.json()
     acousticness = response["acousticness"]
     valence = response["valence"]
-    values = {'Acousticness': acousticness, 'Valence': valence}
+    energy = response["energy"]
+    speechiness = response["speechiness"]
+    tempo = response["tempo"]
+    danceability = response["danceability"]
+    mode = response["mode"]
+    values = {'Acousticness': acousticness, 'Valence': valence, 'Energy': energy, 'Speechiness': speechiness, 'Tempo': tempo, 'Danceability': danceability, 'Mode': mode}
     print(values)
     return Response({'status': values}, status=status.HTTP_200_OK)

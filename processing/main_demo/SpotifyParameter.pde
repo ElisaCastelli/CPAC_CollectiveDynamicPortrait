@@ -1,16 +1,17 @@
 
 class SpotifyParameter{
   
-  float acousticness;
-  float valence;
+  float acousticness, valence, energy, speechiness, tempo, danceability, mode;
   
   SpotifyParameter(String message){
-    int length = message.length();
-     int parsePosition = message.indexOf(",");
-     this.acousticness = float(message.substring(1,parsePosition));
-     this.valence = float(message.substring(parsePosition+2, length-1 ));
-     //print(acousticness);
-     //print(valence);
+    String[] listParameters = split(message, ',');
+    acousticness = float(listParameters[0]);
+    valence = float(listParameters[1]);
+    energy = float(listParameters[2]);
+    speechiness = float(listParameters[3]);
+    tempo = float(listParameters[4]);
+    danceability = float(listParameters[5]);
+    mode = float(listParameters[6]);
   }
   
   float getAcousticness(){
@@ -20,5 +21,23 @@ class SpotifyParameter{
   float getValence(){
     return valence;
   }
+  float getEnergy(){
+    return energy;
+  }
+  
+  float getSpeechiness(){
+    return speechiness;
+  }
+  float getTempo(){
+    return tempo;
+  }
+  
+  float getDanceability(){
+    return danceability;
+  }
+  float getMode(){
+    return mode;
+  }
+  
   
 }

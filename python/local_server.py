@@ -56,9 +56,16 @@ class GetUserTopTracks:
         acousticness = response_json["acousticness"]
         valence = response_json["valence"]
 
-        print("acousticness: {} \nvalence: {}".format(acousticness, valence))
+        energy = response_json["energy"]
+        speechiness = response_json["speechiness"]
+        tempo = response_json["tempo"]
+        danceability = response_json["danceability"]
+        mode = response_json["mode"]
 
-        return acousticness, valence
+        print("acousticness: {} \nvalence: {} \nenergy: {} \nspeechiness: {} \ntempo: {} \ndanceability: {} \nmode: {}"
+        .format(acousticness, valence, energy, speechiness, tempo, danceability, mode))
+
+        return acousticness, valence, energy, speechiness, tempo, danceability, mode
     
     def get_user_profile(self):
         """Search For the user logged in"""
@@ -82,9 +89,9 @@ class GetUserTopTracks:
 def sendvalues(unused_addr):
     cp = GetUserTopTracks()
     cp.get_user_profile()
-    acousticness, valence = cp.get_track_features()
+    acousticness, valence, energy, speechiness, tempo, danceability, mode  = cp.get_track_features()
 
-    msg = [acousticness, valence]
+    msg = [acousticness, valence, energy, speechiness, tempo, danceability, mode]
   
     client.send_message("/spotify_return", "{}".format(msg))
 
