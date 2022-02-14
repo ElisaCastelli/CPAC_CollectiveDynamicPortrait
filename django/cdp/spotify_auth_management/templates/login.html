@@ -23,6 +23,10 @@
         text-align: center;
         background-color: #92a8d1;
       }
+
+      .invisible{
+        display: none;
+      }
   
       #login{
         font-family: 'K2D';font-size: 20px;
@@ -33,9 +37,8 @@
       <div class="welcome">
         <div class="welcomeForm">
           <h1>Collective Dynamic Portrait</h1>
-          <h2>Click here below to start contributing to our portrait</h2>
-          <h2>You will be asked to give us the authorization to use your Spotify's data</h2>
-          <!-- <a class="btn btn-primary" href="/get-auth-url">Login</a> -->
+          <h2 id="description">Click here below to start contributing to our portrait</h2>
+          <h2 id="description2">You will be asked to give us the authorization to use your Spotify's data</h2>
           <button id="login">Start!</button>
         </div>
       </div>
@@ -49,22 +52,24 @@
           .then((response) => response.json())
           .then((data) => {
             spotifyAuthenticated = data.status;
-            console.log(data.status);
+            //console.log(data.status);
             if (!data.status) {
               fetch("/get-auth-url")
                 .then((response) => response.json())
                 .then((data) => {
+                  //penso che non funziona
                   window.location.replace(data.url);
                 });
             } else {
               fetch("/top-track")
                 .then((response) => response.json())
                 .then((data) => {
-                  console.log(data)
-                  // window.location.replace(data.url);
+                  document.getElementById("description").innerHTML = "Thank you, now check out the portrait!";
+                  document.getElementById("description2").classList.add("invisible");
+                  document.getElementById("login").classList.add("invisible");
                 });
             } 
-          });
+          }); 
     }
   </script>
 </html>

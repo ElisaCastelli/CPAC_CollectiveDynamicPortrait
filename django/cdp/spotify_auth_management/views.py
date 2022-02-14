@@ -1,6 +1,6 @@
 from operator import is_
 from urllib import response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from .credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from rest_framework.views import APIView
@@ -26,6 +26,7 @@ class AuthURL(APIView):
     }).prepare().url 
 
     return Response({'url': url}, status=status.HTTP_200_OK)
+
 
 class index(generic.TemplateView):
   template_name = 'login.html'
@@ -59,7 +60,9 @@ def spotify_callback(request, format=None):
 
   print('callback finished')
 
-  return redirect('index') #to redirect to the index page inside our project
+  return  redirect('index') #to redirect to the index page inside our project
+
+
 
 # call s_spotify_authenticated and return a json response
 class IsAuthenticated(APIView):
