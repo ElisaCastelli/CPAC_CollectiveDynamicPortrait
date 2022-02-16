@@ -1,7 +1,7 @@
 
 
 // number of rows/columns of division
-final int n_max_users=10; //it's also equal to n_images max
+final int n_max_users=9; //it's also equal to n_images max
  int n_images;
  int n_users=3; //which is equal to n_images
  
@@ -19,12 +19,12 @@ int value=1;
 //int r=int(random(total_parts));
 
 //text
-String s="PRESS A KEY TO START!";
-//PFont f=createFont("LetterGothicStd.ttf",32);
+
+PFont font;
 float timeInterval;
 float timePast;
-int textFade=2;
-int textAlpha=100;
+int textFade=4;
+int textAlpha=200;
 PImage qrcodeImage;
 PImage frame;
 float transparency=0;
@@ -33,6 +33,7 @@ float transparency=0;
 
 void settings(){
   size(displayWidth,displayHeight,P3D);
+
   switch(n_users){
     case 1:
       N_IMAGE_X=1;
@@ -70,17 +71,14 @@ void settings(){
      N_IMAGE_X=3;
      N_IMAGE_Y=3;
      break;
-    case 10:
-     N_IMAGE_X=2;
-     N_IMAGE_Y=5;
-     break;
+    
   }
 }
 
 
 void setup(){
   
-  
+    //frameRate(10); 
   println(N_IMAGE_X);
   println(N_IMAGE_Y);
   total_parts=N_IMAGE_X * N_IMAGE_Y;
@@ -95,7 +93,9 @@ void setup(){
   frame.resize(img_width+220,img_height+220);
   
   qrcodeImage= loadImage("QRCODE.jpg");
-  //scritta 
+  
+  //text
+  font =createFont("GOGOIA-Regular.ttf",200);
   timePast=millis();
   timeInterval=2000.0f;
   
@@ -145,20 +145,27 @@ void textFade(){
 
 
 void draw() {
-    background(0);
+    background(255);
+    textAlign(CENTER);
+    textFont(font);
+    noStroke();
+    fill(44,100,172);
+    textSize(200);
+    text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/6);
+    textSize(120);
     textFade();
-    textSize(100);
-    fill(153,51,102,textAlpha);
-    //textFont(f);
-    text(s,displayWidth/4-50,displayHeight/2);
+    fill(44,100,172,textAlpha);
+    text("Click here to start!", width/2, height/2);
 
 
  
 if(value==0){
-  background(255);
+  background(0);
   //image(qrcodeImage,10,10);
   //image(qrcodeImage,displayWidth/2-qrcodeImage.width,  displayHeight/2-qrcodeImage.height,  500,500); 
 // plot one part for each image
+transparency+=0.8;
+tint(255, transparency);
 image(frame,pos_image[0].x-110, pos_image[0].y-110);
 for(int index=0; index<img.length;index++){
   for(int image=0;image<img.length;image++){
