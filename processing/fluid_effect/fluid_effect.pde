@@ -17,7 +17,7 @@ float t = 0;
 Fluid fluid;
 
 void settings() {
-
+  size(displayWidth,displayHeight,P3D);
   size(N*SCALE, N*SCALE);
   
   
@@ -25,6 +25,7 @@ void settings() {
 
 void setup() {
  
+  
   fluid = new Fluid(0.2, 0, 0.0000001);
 }
 
@@ -33,12 +34,13 @@ void setup() {
 
 void draw() {
   background(0);
+  
   //cambia la posizione del coso in mezzo che genera il fluido 
   int cx = int(0.5*width/SCALE);
   int cy = int(0.5*height/SCALE);
   for (int i = -1; i <= 1; i++) {
     for (int j = -1; j <= 1; j++) {
-      fluid.addDensity(cx+i, cy+j, random(50, 100));//densità del fluido, se diminuisco il range, viene più effetto fumo (initial one: 50, 150);
+      fluid.addDensity(cx+i, cy+j, random(50, 150));//densità del fluido, se diminuisco il range, viene più effetto fumo (initial one: 50, 150);
     }
   }
   
