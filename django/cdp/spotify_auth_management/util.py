@@ -80,7 +80,7 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     except:
         return {'Error': 'Issue with request'}
 
-def send_msg( request,acousticness, valence, energy, speechiness,tempo,danceability,mode):
+def send_msg(request, acousticness, valence, energy, speechiness, tempo, danceability, mode):
     try:
         obj=MessageValues.objects.create(acousticness=acousticness, valence=valence, 
             energy=energy, speechiness=speechiness, tempo=tempo, danceability=danceability, mode=mode)
@@ -89,4 +89,19 @@ def send_msg( request,acousticness, valence, energy, speechiness,tempo,danceabil
     except Exception as exc:
         response={"status":"fail", "message":str(exc)}
     return JsonResponse(response)
+
+def get_msgs(request):
+        spotifyValues = MessageValues.objects.all()
+        response = {}
+
+        print('RESPONSE: ', response)
+        for value in spotifyValues:
+            response["acousticness"] = value.acousticness
+            response["valence"] = value.valence
+            response["energy"] = value.energy
+            response["speechiness"] = value.speechiness
+            response["tempo"] = value.tempo
+            response["danceability"] = value.danceability
+            response["mode"] = value.mode
+        return JsonResponse(response)
 

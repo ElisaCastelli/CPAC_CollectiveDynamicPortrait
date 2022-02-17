@@ -16,7 +16,7 @@ Including another URLconf
 from argparse import Namespace
 from django.urls import include, path
 from spotify_auth_management.views import *
-from spotify_auth_management import apps
+from spotify_auth_management import util
 
 app_name = 'cdp'
 
@@ -26,5 +26,5 @@ urlpatterns = [
     path('redirect', spotify_callback),
     path('is-authenticated', IsAuthenticated.as_view()),
     path('top-track', TopTrack.as_view()),
-    path('get_msgs', apps.get_msgs, name="get_msgs")
+    path('get_msgs', util.get_msgs, name="get_msgs")
 ]
