@@ -1,0 +1,8 @@
+django
+gevent==21.1.2
+gevent-websocket==0.10.1
+gunicorn
+python-dotenv
+requests
+datetime
+rest_framework
