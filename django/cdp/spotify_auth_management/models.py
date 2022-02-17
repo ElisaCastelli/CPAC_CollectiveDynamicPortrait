@@ -12,3 +12,8 @@ class SpotifyToken(models.Model):
 class MessageValues(models.Model):
     acousticness = models.FloatField()
     valence = models.FloatField()
+    energy = models.FloatField()
+    speechiness = models.FloatField()
+    tempo = models.FloatField()
+    danceability = models.FloatField()
+    mode = models.FloatField()
