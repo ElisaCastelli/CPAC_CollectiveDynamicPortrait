@@ -92,6 +92,7 @@ def send_msg(request, acousticness, valence, energy, speechiness, tempo, danceab
 
 def get_msgs(request):
         spotifyValues = MessageValues.objects.all()
+        #spotifyValues = MessageValues.objects.last()
         response = {}
 
         print('RESPONSE: ', response)
