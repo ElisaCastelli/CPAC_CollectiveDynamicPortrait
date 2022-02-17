@@ -1,1 +1,1 @@
-web: gunicorn manage.py
+web: gunicorn cdp.wsgi
