@@ -1,1 +1,1 @@
-web: gunicorn cdp.wsgi
+web: gunicorn CPAC_CollectiveDynamicPortrait.wsgi
