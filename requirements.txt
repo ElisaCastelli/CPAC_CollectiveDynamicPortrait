@@ -5,4 +5,4 @@ gunicorn
 python-dotenv
 requests
 datetime
-rest_framework==3.13.1
+djangorestframework==3.13.1
