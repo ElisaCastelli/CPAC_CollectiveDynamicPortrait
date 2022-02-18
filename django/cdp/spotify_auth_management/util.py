@@ -1,5 +1,5 @@
+from pickle import TRUE
 from .models import SpotifyToken, MessageValues
-from urllib.parse import parse_qs
 from django.utils import timezone
 from django.http import JsonResponse
 from datetime import timedelta
@@ -10,28 +10,12 @@ BASE_URL = "https://api.spotify.com/v1/"
 
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
-    print(user_tokens)
     if user_tokens.exists():
+        print("Scadenza già esistente: ",user_tokens[0].expires_in)
         return user_tokens[0]
     else:
         return None
 
-# function to create or refresh user token
-def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
-    tokens = get_user_tokens(session_id)
-    print(tokens)
-    expires_in = timezone.now() + timedelta(seconds=expires_in) 
-    print(expires_in)
-
-    if tokens:
-        tokens.access_token = access_token
-        tokens.refresh_token = refresh_token
-        tokens.expires_in = expires_in
-        tokens.token_type = token_type
-        tokens.save(update_fields=['access_token', 'refresh_token', 'expires_in', 'token_type'])
-    else:
-        tokens = SpotifyToken(user=session_id, access_token=access_token, refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
-        tokens.save()
 
 # function to check if the time is over
 def is_spotify_authenticated(session_id): 
@@ -39,6 +23,7 @@ def is_spotify_authenticated(session_id):
     if tokens:
         expiry = tokens.expires_in
         if expiry <= timezone.now():
+            print("Scaduto")
             refresh_spotify_token(session_id)
         
         return True
@@ -59,9 +44,28 @@ def refresh_spotify_token(session_id):
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
-    refresh_token = response.get('refresh_token')
+    #refresh_token = response.get('refresh_token')
+    #REFRESH è stato tolto perchè nella response era None ma nel db c'è la constraint che non può essere nullo
+    #non so come togliere la constraint, quindi ho rimesso quello vecchio
 
     update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token)
+
+    # function to create or refresh user token
+def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
+    tokens = get_user_tokens(session_id)
+    print("Update:",tokens)
+    expires_in = timezone.now() + timedelta(seconds=expires_in)
+    print("Scadenza:",expires_in)
+
+    if tokens:
+        tokens.access_token = access_token
+        tokens.refresh_token = refresh_token
+        tokens.expires_in = expires_in
+        tokens.token_type = token_type
+        tokens.save(update_fields=['access_token', 'refresh_token', 'expires_in', 'token_type'])
+    else:
+        tokens = SpotifyToken(user=session_id, access_token=access_token, refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
+        tokens.save()
 
 def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     tokens = get_user_tokens(session_id)

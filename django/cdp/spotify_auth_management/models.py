@@ -1,12 +1,12 @@
 from django.db import models
 
 class SpotifyToken(models.Model):
-    user = models.CharField(max_length=50, unique=True)
+    user = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    refresh_token = models.CharField(max_length=150)
-    access_token = models.CharField(max_length=150)
+    refresh_token = models.CharField(max_length=512, null=True, blank=True) 
+    access_token = models.CharField(max_length=512)
     expires_in = models.DateTimeField()
-    token_type = models.CharField(max_length=50)
+    token_type = models.CharField(max_length=64)
 
 
 class MessageValues(models.Model):
