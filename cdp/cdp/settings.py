@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-mrb-n#%$ilrkh$y8$rpyr7)eiog!a5c*(omdzovhp#!5!l)ad7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://collective-dynamic-portrait.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
