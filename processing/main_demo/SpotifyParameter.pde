@@ -2,6 +2,18 @@
 class SpotifyParameter{
   
   float acousticness, valence, energy, speechiness, tempo, danceability, mode;
+  String reqString;
+  
+  SpotifyParameter(float acousticness,float valence,float energy,float speechiness,float tempo,float danceability,float mode, String reqString){
+    this.acousticness = acousticness;
+    this.valence = valence;
+    this.energy = energy;
+    this.speechiness = speechiness;
+    this.tempo = tempo;
+    this.danceability = danceability;
+    this.mode = mode;
+    this.reqString = reqString;
+  }
   
   SpotifyParameter(String message){
     String[] listParameters = split(message, ',');
@@ -12,6 +24,10 @@ class SpotifyParameter{
     tempo = float(listParameters[4]);
     danceability = float(listParameters[5]);
     mode = float(listParameters[6]);
+  }
+  
+  boolean checkEqual(SpotifyParameter sp2){
+    return this.acousticness == sp2.getAcousticness() && this.valence == sp2.getValence() && this.energy == sp2.getEnergy() && this.speechiness == sp2.getSpeechiness() && this.tempo == sp2.getTempo() && this.danceability == sp2.getDanceability() && this.mode == sp2.getMode();
   }
   
   float getAcousticness(){
@@ -38,6 +54,8 @@ class SpotifyParameter{
   float getMode(){
     return mode;
   }
-  
-  
+
+  String getReqString(){
+    return reqString;  
+  }
 }

@@ -11,12 +11,18 @@ void setup(){
 void draw(){
   background(0);
   stroke(255);
-  strokeWeight(1);
-  translate (width/2,height/2);
+  strokeWeight(0.5);
+ 
+  translate (width/4-100,height/2);
   for (int i=0; i<100; i++){
   line(x1(t+i),y1(t+i),x2(t+i),y2(t+i));
+   stroke(204,153,255);
+   line(x1(t+i)+1100,y1(t+i),x2(t+i)+1100,y2(t+i));
+   stroke(0,128,128);
+   rect(x1(t+i),y1(t+i),5,5);
+  rect(x1(t+i)+1100,y1(t+i),5,5);
   }
-  t+=0.3;
+  t+=0.05;
 }
 
 float x1 (float t){

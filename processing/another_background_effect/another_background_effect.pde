@@ -22,5 +22,7 @@ void draw(){
       int m=millis();
       fill(m%c);
       rect(wave1,wave2,s,s);
+      stroke(0,128,128);
  }
+ 
 }
