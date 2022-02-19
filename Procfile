@@ -1,1 +1,1 @@
-web: gunicorn cdp.wsgi
+web: gunicorn spotify_auth_management.wsgi
