@@ -2,4 +2,4 @@
 # CLIENT_SECRET = "73fab72888874b4483f74f64ffad137c"
 CLIENT_ID = "a60d06620a364787aeacc2456bc8fd1b"
 CLIENT_SECRET = "8bfaf8d3489141cdb12aa6b3b9164bd1"
-REDIRECT_URI = "http://127.0.0.1:8000/redirect"
+REDIRECT_URI = "https://collective-dynamic-portrait.herokuapp.com/redirect"
