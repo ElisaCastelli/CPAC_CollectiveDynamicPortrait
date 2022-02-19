@@ -17,28 +17,52 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 # path where images are stored
 image_folder = '../pictures/'
 
-# here I should receive parameters from spotify
-#acousticness = 1
-#valence = 1
-#content_filename = 'dummy_cropped.jpg'
+# here I receive parameters from spotify
 
 acousticness = float(sys.argv[1])
 valence = float(sys.argv[2])
-content_filename = sys.argv[3]
+energy = float(sys.argv[3])
+speechiness = float(sys.argv[4])
+content_filename = sys.argv[5]
 
 if not os.path.exists(image_folder + content_filename):
     print(1)
     sys.exit()
 
-def style_chooser(acousticness, valence):
-    if acousticness >= 0.2 and valence >= 0.5 :
-        return 'monet_poppy.jpg'
-    elif acousticness < 0.2 and valence >= 0.5:
+def style_chooser(acousticness, valence, energy, speechiness):
+    if acousticness >= 0.2 and valence >= 0.5 and energy >= 0.5 and speechiness >= 0.5:
+        return 'botticelli.jpg'
+    elif acousticness >= 0.2 and valence >= 0.5 and energy >= 0.5 and speechiness < 0.5:
+        return 'dinamismo_di_un_ciclista.jpg'
+    elif acousticness >= 0.2 and valence >= 0.5 and energy < 0.5 and speechiness >= 0.5:
+        return 'veronese.jpg'
+    elif acousticness >= 0.2 and valence >= 0.5 and energy < 0.5 and speechiness < 0.5:
+        return 'monet.jpg'
+    elif acousticness >= 0.2 and valence < 0.5 and energy >= 0.5 and speechiness >= 0.5:
+        return 'schiele.jpg'
+    elif acousticness >= 0.2 and valence < 0.5 and energy >= 0.5 and speechiness < 0.5:
+        return 'tlou2.jpg'
+    elif acousticness >= 0.2 and valence < 0.5 and energy < 0.5 and speechiness >= 0.5:
+        return 'mangiatori_di_patate.jpg'
+    elif acousticness >= 0.2 and valence < 0.5 and energy < 0.5 and speechiness < 0.5:
+        return 'jasnikoswky.jpg'
+    elif acousticness < 0.2 and valence >= 0.5 and energy >= 0.5 and speechiness >= 0.5:
+        return 'fallen_leafs.jpg'
+    elif acousticness < 0.2 and valence >= 0.5 and energy >= 0.5 and speechiness < 0.5:
+        return 'kandinsky.jpg'
+    elif acousticness < 0.2 and valence >= 0.5 and energy < 0.5 and speechiness >= 0.5:
         return 'journey.jpg'
-    elif acousticness >= 0.2 and valence < 0.5 :
-        return 'van_gogh_patate.jpg'
-    elif acousticness < 0.2 and valence < 0.5 :
-        return 'pixel_art.jpg'
+    elif acousticness < 0.2 and valence >= 0.5 and energy < 0.5 and speechiness < 0.5:
+        return 'mondrian.jpg'
+    elif acousticness < 0.2 and valence < 0.5 and energy >= 0.5 and speechiness >= 0.5:
+        return 'barlog.jpg'
+    elif acousticness < 0.2 and valence < 0.5 and energy >= 0.5 and speechiness < 0.5:
+        return 'futurismo2.jpg'
+    elif acousticness < 0.2 and valence < 0.5 and energy < 0.5 and speechiness >= 0.5:
+        return 'bloodborne2.jpg'
+    elif acousticness < 0.2 and valence < 0.5 and energy < 0.5 and speechiness < 0.5:
+        return 'bloodborne.jpg'
+    
     else:
         return 'error'
 

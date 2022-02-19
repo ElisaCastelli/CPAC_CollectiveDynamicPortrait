@@ -113,14 +113,16 @@ def login():
 
 
 # function for handling style transfer requests
-def run_style_transfer(message_id, acousticness, valence, content_image):
+def run_style_transfer(message_id, acousticness, valence, energy, speechiness, content_image):
 # format is used to format the numbers for string values instead of objects:
     print(message_id,"OSC ID")
     print("acousticness -> ", acousticness)
     print("valence -> ", valence)
+    print("energy -> ", energy)
+    print("speechiness -> ", speechiness)
     print("content image -> ", content_image)
 
-    process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + content_image).read()
+    process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + str(energy) + ' ' + str(speechiness) + ' ' + content_image).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
         client.send_message("/style_return", "0")
