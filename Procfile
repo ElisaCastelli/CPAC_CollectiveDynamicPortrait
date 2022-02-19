@@ -1,1 +1,1 @@
-web: gunicorn cdp/cdp.wsgi
+web: gunicorn cdp.wsgi
