@@ -1,5 +1,6 @@
 import http.requests.*;
 
+
 class API_Client{
   
   GetRequest req;
@@ -15,18 +16,19 @@ class API_Client{
   }
   
   // ---- METHODS ----
-  String[] get_msgs(){
+  SpotifyParameter get_msgs(){
     this.req.send();
     
-    if (VERBOSE){
-      println("Response Content: " + req.getContent());
-    }
     JSONObject JSONobj = parseJSONObject(req.getContent());
-    JSONArray JSONmsgs = JSONobj.getJSONArray("msgs"); 
-    String[] msgs=new String[JSONmsgs.size()]; 
-    for (int t=0; t<JSONmsgs.size(); t++){      
-      msgs[t] = JSONmsgs.getString(t);    
-    } 
-    return msgs;
+    float[] msgs=new float[JSONobj.size()]; 
+    msgs[0] = JSONobj.getFloat("acousticness");
+    msgs[1] = JSONobj.getFloat("valence");
+    msgs[2] = JSONobj.getFloat("energy");
+    msgs[3] = JSONobj.getFloat("speechiness");
+    msgs[4] = JSONobj.getFloat("tempo");
+    msgs[5] = JSONobj.getFloat("danceability");
+    msgs[6] = JSONobj.getFloat("mode");
+    SpotifyParameter sp = new SpotifyParameter(msgs[0],msgs[1],msgs[2],msgs[3],msgs[4],msgs[5],msgs[6], req.getContent());
+    return sp;
   }
 }

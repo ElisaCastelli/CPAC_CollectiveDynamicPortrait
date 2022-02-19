@@ -1,5 +1,5 @@
 # import dependencies
-from IPython.display import display, Javascript, Image
+#from IPython.display import display, Javascript, Image
 from base64 import b64decode, b64encode
 import cv2
 import numpy as np

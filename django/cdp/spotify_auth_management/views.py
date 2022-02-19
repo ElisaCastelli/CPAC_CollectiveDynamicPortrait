@@ -1,7 +1,4 @@
-from operator import is_
-from urllib import response
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import  redirect
 from .credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from rest_framework.views import APIView
 from requests import Request, post
@@ -31,6 +28,7 @@ class AuthURL(APIView):
 class index(generic.TemplateView):
   template_name = 'login.html'
   # return HttpResponse("You have logged in correctly!")
+
 
 def spotify_callback(request, format=None):
   code = request.GET.get('code') #code we will use to authenticate the user
@@ -63,7 +61,6 @@ def spotify_callback(request, format=None):
   return  redirect('index') #to redirect to the index page inside our project
 
 
-
 # call s_spotify_authenticated and return a json response
 class IsAuthenticated(APIView):
   def get(self, request, format=None):
@@ -74,7 +71,6 @@ class IsAuthenticated(APIView):
 
 
 class TopTrack(APIView):
-
   def get(self, request, format=None):
     endpointTopTrack = "me/top/tracks?time_range=short_term&limit=1"
     response = execute_spotify_api_request(request.session.session_key,endpoint=endpointTopTrack)
@@ -84,7 +80,7 @@ class TopTrack(APIView):
 
     endpointFeaturesByURI = "audio-features/{}".format(uri)
     response = execute_spotify_api_request(request.session.session_key,endpoint=endpointFeaturesByURI)
-    #responseFeaturesByURI_json = response.json()
+
     acousticness = response["acousticness"]
     valence = response["valence"]
     energy = response["energy"]
@@ -94,4 +90,5 @@ class TopTrack(APIView):
     mode = response["mode"]
     values = {'Acousticness': acousticness, 'Valence': valence, 'Energy': energy, 'Speechiness': speechiness, 'Tempo': tempo, 'Danceability': danceability, 'Mode': mode}
     print(values)
+    send_msg(request=request, acousticness=acousticness, valence=valence, energy=energy, speechiness=speechiness, tempo=tempo, danceability=danceability, mode=mode)
     return Response({'status': values}, status=status.HTTP_200_OK)
