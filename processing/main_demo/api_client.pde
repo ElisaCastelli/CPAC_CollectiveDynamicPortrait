@@ -1,7 +1,7 @@
 import http.requests.*;
 
 class API_Client{
-  
+  String API_URL="https://collective-dynamic-portrait.herokuapp.com";
   GetRequest req;
   
   String get_msg_api = "";
@@ -18,6 +18,7 @@ class API_Client{
     String msgs = new String();
     msgs = req.getContent();
     println("Response Content: " + msgs);
+    
     return msgs;
   }
 }

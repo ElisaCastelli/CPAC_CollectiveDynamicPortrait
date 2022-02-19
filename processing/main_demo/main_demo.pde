@@ -44,6 +44,9 @@ ArrayList<SpotifyParameter> participants_spotify_values;
 /* communication */
 OscP5 oscP5;
 NetAddress myRemoteLocation;
+String API_URL="https://collective-dynamic-portrait.herokuapp.com";
+API_Client client;
+String msgs;
 
 /* font */
 PFont font;
@@ -58,6 +61,7 @@ boolean mouse_first_click = false;
 boolean photo_taken = false;
 
 void setup() {
+  client = new API_Client(API_URL);
   size(displayWidth,displayHeight,P3D);
   frameRate(10);
   timePast=millis();
@@ -127,7 +131,7 @@ void draw() {
       textSize(120);
       noStroke();
       fill(44,100,172);
-      text("go check the server's command line", width/2, height/2);
+      text("Scan the QR code!", width/2, height/2);
    }
 
    if (photo_taken){
