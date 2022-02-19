@@ -62,7 +62,8 @@ boolean photo_taken = false;
 
 void setup() {
   client = new API_Client(API_URL);
-  size(displayWidth,displayHeight,P3D);
+  //size(displayWidth,displayHeight,P3D);
+  size(displayWidth,displayHeight);
   frameRate(10);
   timePast=millis();
   timeInterval=2000.0f;
@@ -99,6 +100,11 @@ void draw() {
   }
 
    if(message_receiver != null){
+     
+     //if(participants_spotify_values.size()==0 || !sp.checkEqual(participants_spotify_values.get(participants_spotify_values.size()-1))){
+      //  participants_spotify_values.add(sp);
+      //  println(sp.getReqString());
+      //}
       background(255);
       textAlign(CENTER);
       textSize(120);
