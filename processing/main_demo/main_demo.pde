@@ -96,7 +96,10 @@ void draw() {
     textSize(120);
     textFade();
     fill(44,100,172,textAlpha);
-    text("Click here to start!", width/2, height/2);
+    PImage QR;
+    QR = loadImage("QR_heroku.png");
+    image(QR, width/2, 3*height/5, 200, 200);
+    text("Scan the QR code and then click here to start!", width/2, height/2);
   }
 
    if(message_receiver != null){
