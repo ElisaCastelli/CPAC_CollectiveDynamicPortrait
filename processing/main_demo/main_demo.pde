@@ -62,7 +62,7 @@ boolean photo_taken = false;
 
 void setup() {
   client = new API_Client();
-  client.deleteAll();
+  client.deleteAll(); //svuoto il database
   //size(displayWidth,displayHeight,P3D);
   size(displayWidth,displayHeight);
   frameRate(10);
@@ -134,16 +134,14 @@ void draw() {
      }
    }
 
-   if (mouse_first_click){
-      background(255);
-      textAlign(CENTER);
-      textSize(120);
-      noStroke();
-      fill(44,100,172);
-      text("Scan the QR code!", width/2, height/2);
-      QR = loadImage("QR_heroku.png");
-      image(QR, width/2, 3*height/5, 200, 200);
-   }
+   //if (mouse_first_click){
+   //   background(255);
+   //   textAlign(CENTER);
+   //   textSize(120);
+   //   noStroke();
+   //   fill(44,100,172);
+   //   text("go check the server's command line", width/2, height/2);
+   //}
 
    if (photo_taken){
       background(255);
@@ -160,11 +158,10 @@ void draw() {
 void mouseClicked(){
   
   if(message_receiver == null && new_user_arrived){
-    
-    SpotifyParameter temp = client.get_msgs();
-    
+   
     new_user_arrived = false;
     style_done = false;
+    SpotifyParameter temp = client.get_msgs();
     mouse_first_click = true;
     if(temp!=null){ // aggiungere se il valore arrivato è diverso dall'ultimo già memorizzato altrimenti aspetta a fare click
       participants_spotify_values.add(temp);
