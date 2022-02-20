@@ -3,10 +3,6 @@
 from base64 import b64decode, b64encode
 import cv2
 import numpy as np
-import PIL
-import io
-import html
-import time
 import os
 import sys
 
@@ -15,6 +11,8 @@ import sys
 # load cv2.CascadeClassifier
 # I needed to specify the full path to the xml file, modify according to your pc
 face_cascade = cv2.CascadeClassifier('C:\\Users\\franc\\anaconda3\\envs\\tf-gpu\\Lib\\site-packages\\cv2\\data\\haarcascade_frontalface_alt2.xml')
+print("Entra in take_photo_demo")
+#face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 
 # path where images are stored

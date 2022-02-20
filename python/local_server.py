@@ -15,7 +15,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 client = udp_client.SimpleUDPClient("127.0.0.1", 4321)
 
 
-class GetUserTopTracks:
+''' class GetUserTopTracks:
     def __init__(self):
         self.spotify_token = login()
     
@@ -96,7 +96,7 @@ def sendvalues(unused_addr):
     client.send_message("/spotify_return", "{}".format(msg))
 
 
-def login():
+def login(): 
     cid = '49e612edb8144e78befdfceaf0612429'
     secret = '73fab72888874b4483f74f64ffad137c'
     client_credentials_manager = SpotifyClientCredentials(
@@ -107,7 +107,7 @@ def login():
     print("https://developer.spotify.com/console/get-current-user/")
     access_token = input("Enter your token: ")
 
-    return access_token
+    return access_token '''
 
 
 
@@ -122,6 +122,8 @@ def run_style_transfer(message_id, acousticness, valence, energy, speechiness, c
     print("speechiness -> ", speechiness)
     print("content image -> ", content_image)
 
+    client.send_message("/style_return", "0")
+    print('style transfer completed!')
     process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + str(energy) + ' ' + str(speechiness) + ' ' + content_image).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
@@ -141,7 +143,8 @@ def run_style_transfer(message_id, acousticness, valence, energy, speechiness, c
 def run_take_photo(message_id, participant_id):
     print(message_id,"OSC ID")
     print("participant_id -> ", participant_id)
-
+    print('photo taken and face obtained!')
+    client.send_message("/photo_return", "0")
     process_out = os.popen('python take_photo_demo.py ' + str(participant_id)).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
@@ -169,7 +172,7 @@ if __name__ == "__main__":
 
     # This links a messageID to a function. 
     # That is, when a message with a given ID is received, the given function is run:
-    dispatcher.map("/spotify",sendvalues)
+    #dispatcher.map("/spotify",sendvalues)
     dispatcher.map("/style",run_style_transfer)
     dispatcher.map("/photo",run_take_photo)
 

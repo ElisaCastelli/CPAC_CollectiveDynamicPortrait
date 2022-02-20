@@ -36,7 +36,7 @@ PImage[] img;
 
 /* spotify */
 
-String message_receiver;
+String message_receiver="";
 ArrayList<SpotifyParameter> participants_spotify_values;
 
 /*QR image*/
@@ -102,7 +102,7 @@ void draw() {
     text("Scan the QR code and then click here to start!", width/2, height/2);
   }
 
-   if(message_receiver != null){
+   if(message_receiver != ""){
      
      //if(participants_spotify_values.size()==0 || !sp.checkEqual(participants_spotify_values.get(participants_spotify_values.size()-1))){
       //  participants_spotify_values.add(sp);
@@ -120,10 +120,13 @@ void draw() {
      updatePortrait();
      background(255);
      textAlign(CENTER);
-     textSize(120);
+     textSize(100);
      noStroke();
      fill(44,100,172);
-     text("A new person arrives... Double click if you want to join!", width/2, height/6); // aggiungo la frase in alto sopra le foto
+     QR = loadImage("QR_heroku.png");
+     image(QR, 3*width/4, 2*height/5, 200, 200);
+     text("A new person arrives...", width/2, height/8); // aggiungo la frase in alto sopra le foto
+     text("Scan the QR and then double click to join", width/2, 2*height/8);
      // plot one part for each image
      for(int index=0; index<img.length;index++){
        for(int image=0;image<img.length;image++){
@@ -157,7 +160,7 @@ void draw() {
 
 void mouseClicked(){
   
-  if(message_receiver == null && new_user_arrived){
+  if(message_receiver == "" && new_user_arrived){
    
     new_user_arrived = false;
     style_done = false;
@@ -165,15 +168,15 @@ void mouseClicked(){
     mouse_first_click = true;
     if(temp!=null){ // aggiungere se il valore arrivato è diverso dall'ultimo già memorizzato altrimenti aspetta a fare click
       participants_spotify_values.add(temp);
-      print(temp.getReqString());
+      println("Aggiungo sp");
+      println(temp.getReqString());
       message_receiver = temp.getReqString();
       mouse_first_click = false;
     }
     //OscMessage myMessage = new OscMessage("/spotify");
     //oscP5.send(myMessage, myRemoteLocation);
     
-  }
-  if (style_done){
+  }else if (style_done){
     new_user_arrived = true;
   }
 }
@@ -187,18 +190,20 @@ void keyPressed(){
     myMessage.add(participants_spotify_values.size());
     oscP5.send(myMessage, myRemoteLocation);
     
+    println("mando osc photo");
     // for final project is better to wait for message from python server
     // wait until face file is created
     try{
       do{
         delay(1000);
+        print((str(participants_spotify_values.size()) + "_face.jpg"));
+        
       } while(! fileExistsCaseSensitive(str(participants_spotify_values.size()) + "_face.jpg"));
-    }
-    catch (Exception e){
+    }catch (Exception e){
       println("error: " + e);
     }
     photo_taken = true;
-    
+    println("mando osc style");
     // send stylized photo
     myMessage = new OscMessage("/style");
     myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
@@ -218,7 +223,7 @@ void keyPressed(){
 void oscEvent(OscMessage theOscMessage) {
   
   if(theOscMessage.checkAddrPattern("/photo_return")==true){
-    message_receiver = null;
+    message_receiver = "";
   }
   
   //if(theOscMessage.checkAddrPattern("/spotify_return")==true){
