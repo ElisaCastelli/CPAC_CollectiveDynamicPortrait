@@ -1,8 +1,8 @@
 /*
 Processing flowchart:
 - click per partecipare                             DONE
-- qrcode appare                                     work in progress
-- processing riceve valori spotify                  DONE
+- qrcode appare                                     in progress
+- processing riceve valori spotify                  in progress
 - esecuzione foto                                   DONE
 - applicazione ritaglio,                            DONE
                 divisione,                          DONE
@@ -44,7 +44,6 @@ ArrayList<SpotifyParameter> participants_spotify_values;
 /* communication */
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-String API_URL="https://collective-dynamic-portrait.herokuapp.com";
 API_Client client;
 String msgs;
 
@@ -61,7 +60,8 @@ boolean mouse_first_click = false;
 boolean photo_taken = false;
 
 void setup() {
-  client = new API_Client(API_URL);
+  client = new API_Client();
+  client.deleteAll();
   //size(displayWidth,displayHeight,P3D);
   size(displayWidth,displayHeight);
   frameRate(10);
@@ -159,11 +159,22 @@ void draw() {
 void mouseClicked(){
   
   if(message_receiver == null && new_user_arrived){
+    
+    SpotifyParameter temp = client.get_msgs();
+    
     new_user_arrived = false;
     style_done = false;
-    OscMessage myMessage = new OscMessage("/spotify");
-    oscP5.send(myMessage, myRemoteLocation);
     mouse_first_click = true;
+    if(temp!=null){ // aggiungere se il valore arrivato è diverso dall'ultimo già memorizzato altrimenti aspetta a fare click
+      participants_spotify_values.add(temp);
+      print(temp.getReqString());
+      message_receiver = temp.getReqString();
+      mouse_first_click = false;
+    }
+    //OscMessage myMessage = new OscMessage("/spotify");
+    //oscP5.send(myMessage, myRemoteLocation);
+    
+    
     
   }
   if (style_done){
@@ -214,17 +225,17 @@ void oscEvent(OscMessage theOscMessage) {
     message_receiver = null;
   }
   
-  // I know, it's horrible, but I don't trust java
-  if(theOscMessage.checkAddrPattern("/spotify_return")==true){
+  //if(theOscMessage.checkAddrPattern("/spotify_return")==true){
     
-    //leggo i valori ricevuti
-    message_receiver = theOscMessage.get(0).stringValue();
+  //  //leggo i valori ricevuti
+  //  message_receiver = theOscMessage.get(0).stringValue();
     
-    println("Spotify parameters: " + message_receiver);
-    SpotifyParameter sp = new SpotifyParameter(message_receiver);
-    participants_spotify_values.add(sp);
-    mouse_first_click = false;
-  }
+  //  println("Spotify parameters: " + message_receiver);
+  //  SpotifyParameter sp = new SpotifyParameter(message_receiver);
+  //  participants_spotify_values.add(sp);
+  //  mouse_first_click = false;
+  //}
+  
   if(theOscMessage.checkAddrPattern("/style_return")==true){
     style_done = true;
     photo_taken = false;

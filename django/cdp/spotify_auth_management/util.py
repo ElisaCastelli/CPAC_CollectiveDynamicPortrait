@@ -110,3 +110,5 @@ def get_msgs(request):
             response["mode"] = value.mode
         return JsonResponse(response)
 
+def deleteAllFromSpotifyValues():
+    MessageValues.objects.all().delete()
