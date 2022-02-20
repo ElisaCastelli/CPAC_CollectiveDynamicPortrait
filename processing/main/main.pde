@@ -186,6 +186,7 @@ void mouseClicked(){
 }
 
 void keyPressed(){
+  OscMessage myMessage;
   if (key == '\n'){
     
     // three STATES
@@ -211,7 +212,7 @@ void keyPressed(){
       
 
       // ask python to take photo
-      OscMessage myMessage = new OscMessage("/photo");
+      myMessage = new OscMessage("/photo");
       myMessage.add(participants_spotify_values.size());
       oscP5.send(myMessage, myRemoteLocation);
       
@@ -222,13 +223,27 @@ void keyPressed(){
           delay(1000);
           print((str(participants_spotify_values.size()) + "_face.jpg"));
           
-          if (message_receiver)
+          //if (message_receiver)
           
         } while(! fileExistsCaseSensitive(str(participants_spotify_values.size()) + "_face.jpg"));
       }catch (Exception e){
         println("error: " + e);
       }
-      photo_taken = true;
+      
+    }
+    else if(PROCESSING){
+      myMessage = new OscMessage("/style");
+      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
+      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
+      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getEnergy()); //prendo l'energy dagli ultimi valori aggiunti
+      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getSpeechiness());  //prendo la speechiness dagli ultimi valori aggiunti
+      //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
+      //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
+      //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
+      myMessage.add(str(participants_spotify_values.size()) + "_face.jpg");
+
+      /* Send photo and params to style_transfer script */
+      oscP5.send(myMessage, myRemoteLocation);
     }
   }
   
@@ -247,18 +262,7 @@ void keyPressed(){
     
     println("mando osc style");
     // send stylized photo
-    myMessage = new OscMessage("/style");
-    myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
-    myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
-    myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getEnergy()); //prendo l'energy dagli ultimi valori aggiunti
-    myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getSpeechiness());  //prendo la speechiness dagli ultimi valori aggiunti
-    //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
-    //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
-    //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
-    myMessage.add(str(participants_spotify_values.size()) + "_face.jpg");
-
-    /* Send photo and params to style_transfer script */
-    oscP5.send(myMessage, myRemoteLocation);    
+        
   }
 }
 
