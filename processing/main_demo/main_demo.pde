@@ -39,7 +39,8 @@ PImage[] img;
 String message_receiver;
 ArrayList<SpotifyParameter> participants_spotify_values;
 
-
+/*QR image*/
+PImage QR;
 
 /* communication */
 OscP5 oscP5;
@@ -96,7 +97,6 @@ void draw() {
     textSize(120);
     textFade();
     fill(44,100,172,textAlpha);
-    PImage QR;
     QR = loadImage("QR_heroku.png");
     image(QR, width/2, 3*height/5, 200, 200);
     text("Scan the QR code and then click here to start!", width/2, height/2);
@@ -141,6 +141,8 @@ void draw() {
       noStroke();
       fill(44,100,172);
       text("Scan the QR code!", width/2, height/2);
+      QR = loadImage("QR_heroku.png");
+      image(QR, width/2, 3*height/5, 200, 200);
    }
 
    if (photo_taken){
@@ -151,7 +153,6 @@ void draw() {
       fill(44,100,172);
       text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, height/2);
    }
-
 
 }
 
@@ -173,8 +174,6 @@ void mouseClicked(){
     }
     //OscMessage myMessage = new OscMessage("/spotify");
     //oscP5.send(myMessage, myRemoteLocation);
-    
-    
     
   }
   if (style_done){
