@@ -80,9 +80,9 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     except:
         return {'Error': 'Issue with request'}
 
-def send_msg(request, acousticness, valence, energy, speechiness, tempo, danceability, mode):
+def send_msg(request, title, artist, acousticness, valence, energy, speechiness, tempo, danceability, mode):
     try:
-        obj=MessageValues.objects.create(acousticness=acousticness, valence=valence, 
+        obj=MessageValues.objects.create(title = title, artist = artist, acousticness=acousticness, valence=valence, 
             energy=energy, speechiness=speechiness, tempo=tempo, danceability=danceability, mode=mode)
         obj.save()
         response={"status":"ok", "message":"ok" }
@@ -97,6 +97,8 @@ def get_msgs(request):
 
         print('RESPONSE: ', response)
         for value in spotifyValues:
+            response["title"] = value.title
+            response["artist"] = value.artist
             response["acousticness"] = value.acousticness
             response["valence"] = value.valence
             response["energy"] = value.energy

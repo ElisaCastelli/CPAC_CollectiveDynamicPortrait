@@ -91,7 +91,7 @@ class TopTrack(APIView):
     tempo = response["tempo"]
     danceability = response["danceability"]
     mode = response["mode"]
-    values = {'Acousticness': acousticness, 'Valence': valence, 'Energy': energy, 'Speechiness': speechiness, 'Tempo': tempo, 'Danceability': danceability, 'Mode': mode}
+    values = {'Title':song, 'Artist': artist, 'Acousticness': acousticness, 'Valence': valence, 'Energy': energy, 'Speechiness': speechiness, 'Tempo': tempo, 'Danceability': danceability, 'Mode': mode}
     print(values)
-    send_msg(request=request, acousticness=acousticness, valence=valence, energy=energy, speechiness=speechiness, tempo=tempo, danceability=danceability, mode=mode)
+    send_msg(request=request, title=song, artist=artist, acousticness=acousticness, valence=valence, energy=energy, speechiness=speechiness, tempo=tempo, danceability=danceability, mode=mode)
     return Response({'status': values}, status=status.HTTP_200_OK)

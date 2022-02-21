@@ -10,6 +10,8 @@ class SpotifyToken(models.Model):
 
 
 class MessageValues(models.Model):
+    title = models.CharField(max_length=128)
+    artist = models.CharField(max_length=128)
     acousticness = models.FloatField()
     valence = models.FloatField()
     energy = models.FloatField()
