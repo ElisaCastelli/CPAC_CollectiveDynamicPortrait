@@ -7,12 +7,12 @@ class API_Client{
   
   //PostRequest post;
   String get_msg_api="";
-  String deleteAll="";
+  String delete_all="";
   
   // ---- CONSTRUCTOR ----
   API_Client(){
     this.get_msg_api=mainUrl+"/get_msgs";
-    this.deleteAll=mainUrl+"/delete_all";
+    this.delete_all=mainUrl+"/delete_all";
   }
   
   // ---- METHODS ----
@@ -36,7 +36,7 @@ class API_Client{
   }
   
   void deleteAll(){
-    this.req = new GetRequest(this.deleteAll); 
+    this.req = new GetRequest(this.delete_all); 
     this.req.send();
   }
   
