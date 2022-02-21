@@ -100,46 +100,45 @@ void draw() {
   noStroke();
   
   //plot title
-  textSize(150);
-  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/10);
+  textSize(width/18);
+  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/11);
   
   //plot QR code
   QR = loadImage("QR_heroku.png");
-  image(QR, 11 * width/12, 10*height/12, 200, 200);
+  image(QR, 11 * width/12, 10*height/12, width/15, width/15);
   
   //plot INSTRUCTION according to the actual STATE
-  
   if (MAIN){
     println("back in main!");
     updatePortrait();
-    textSize(100);
-    text("Scan the QR and press enter to join", width/2, 1.5 * height/8);
+    textSize(width/35);
+    text("Scan the QR and press enter to join", width/2, 1.5 * height/9);
   }
   else if(PHOTO){
       println("take a photo");
-      textSize(100);
-      text("Press ENTER and say Cheese...!", width/2, 1.5 * height/8);
+      textSize(width/35);
+      text("Press ENTER and say Cheese...!", width/2, 1.5 * height/9);
   }
   else if (PROCESSING){
       println("relax");
-      textSize(100);
-      text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, 1.5 * height/8);
+      textSize(width/35);
+      text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, 1.5 * height/9);
   }
 
   // plot WARNINGS
   
   if (warning_server){
       textFont(font);
-      textSize(80);
+      textSize(width/40);
       fill(255,20,20);
-      text("server not connected", width/8, height/8);
+      text("server not connected", width/8, height/9);
   }
   
   if (warning_auth){
       textFont(font);
-      textSize(80);
+      textSize(width/40);
       fill(255,20,20);
-      text("remember to scan the qr", 7 * width/8, height/8);
+      text("remember to scan the qr", 7 * width/8, height/9);
   }
   
   // plot the portrait
