@@ -5,13 +5,13 @@ void updatePortrait(){
   int lastPhotoExistent = 0; //tengo memorizzato l'indice dell'ultima presente
   img=new PImage[total_parts];
   small_images=new PImage[total_parts*total_parts];
-  File dataFolder2 = new File(dataPath("/Users/elisacastelli/Documents/GitHub/CPAC_CollectiveDynamicPortrait/pictures"));
+  //File dataFolder2 = new File(dataPath("/Users/elisacastelli/Documents/GitHub/CPAC_CollectiveDynamicPortrait/pictures"));
 
   
   if(participants_spotify_values.size() == 0){
     for(int image=0; image < img.length; image++){
-      img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
-      //img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
+      //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
+      img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
       plotSmallImage(image, img_height, img_width);
     }
   }
@@ -20,11 +20,11 @@ void updatePortrait(){
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
         lastPhotoExistent=image;
-        //img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
-        img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
+        img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
+        //img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
       } else { //se non esiste la foto ristampo l'ultima presente
-        //img[image]=loadImage("../../../pictures/" + "stylized" + str(lastPhotoExistent+1) + "_face" + ".jpg");
-        img[image]=loadImage(dataFolder2+ "/stylized" + str(lastPhotoExistent+1) + "_face" + ".jpg");
+        img[image]=loadImage("../../../pictures/" + "stylized" + str(lastPhotoExistent+1) + "_face" + ".jpg");
+        //img[image]=loadImage(dataFolder2+ "/stylized" + str(lastPhotoExistent+1) + "_face" + ".jpg");
       }
       plotSmallImage(image, img_height, img_width);
     }
@@ -32,12 +32,12 @@ void updatePortrait(){
   else if(participants_spotify_values.size() == total_parts){
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
-        //img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
-        img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
+        img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
+        //img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
       }
       else { // tengo questo else per sicurezza ma se funziona puoi toglierlo
-        //img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
-        img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
+        img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
+        //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
       }
       plotSmallImage(image, img_height, img_width);
     }
@@ -45,12 +45,12 @@ void updatePortrait(){
     for(int index=participants_spotify_values.size() - img.length; index<participants_spotify_values.size(); index++){
       int image = index % total_parts;    // usare il modulo è piu figo e leggibile
       if(fileExistsCaseSensitive("stylized"+str(index+1)+"_face"+".jpg")){
-          //img[image]=loadImage("../../../pictures/" + "stylized" + str(index+1) + "_face" + ".jpg");
-          img[image]=loadImage(dataFolder2 + "/stylized" + str(index+1) + "_face" + ".jpg");
+          img[image]=loadImage("../../../pictures/" + "stylized" + str(index+1) + "_face" + ".jpg");
+          //img[image]=loadImage(dataFolder2 + "/stylized" + str(index+1) + "_face" + ".jpg");
       }
       else {
-        //img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
-        img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
+        img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
+        //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
       }
       plotSmallImage(image, img_height, img_width);
     }
