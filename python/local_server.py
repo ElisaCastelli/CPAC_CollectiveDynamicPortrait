@@ -15,112 +15,23 @@ from spotipy.oauth2 import SpotifyClientCredentials
 client = udp_client.SimpleUDPClient("127.0.0.1", 4321)
 
 
-class GetUserTopTracks:
-    def __init__(self):
-        self.spotify_token = login()
-    
-    def get_top_tracks(self):
-        """Search For the top Song"""
-        query = "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5"
-        response = requests.get(
-            query,
-            headers={
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer {}".format(self.spotify_token)
-            }
-        )
-        response_json = response.json()
-        artist = response_json["items"][0]["artists"][0]["name"]
-        song = response_json["items"][0]["name"]
-        uri = response_json["items"][0]["id"]
-
-        print(artist + ' - ' + song)
-
-        return artist, song, uri
-
-    def get_track_features(self):
-        """Search For the Song Features"""
-        artist, song, uri = self.get_top_tracks()
-
-        query = "https://api.spotify.com/v1/audio-features/{}".format(uri)
-        response = requests.get(
-            query,
-            headers={
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer {}".format(self.spotify_token)
-            }
-        )
-        response_json = response.json()
-        acousticness = response_json["acousticness"]
-        valence = response_json["valence"]
-
-        energy = response_json["energy"]
-        speechiness = response_json["speechiness"]
-        tempo = response_json["tempo"]
-        danceability = response_json["danceability"]
-        mode = response_json["mode"]
-
-        print("acousticness: {} \nvalence: {} \nenergy: {} \nspeechiness: {} \ntempo: {} \ndanceability: {} \nmode: {}"
-        .format(acousticness, valence, energy, speechiness, tempo, danceability, mode))
-
-        return acousticness, valence, energy, speechiness, tempo, danceability, mode
-    
-    def get_user_profile(self):
-        """Search For the user logged in"""
-        query = "https://api.spotify.com/v1/me"
-        response = requests.get(
-            query,
-            headers={
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer {}".format(self.spotify_token)
-            }
-        )
-        response_json = response.json()
-        user = response_json["display_name"]
-
-        print(user)
-
-        return user
-
-
-def sendvalues(unused_addr):
-    cp = GetUserTopTracks()
-    cp.get_user_profile()
-    acousticness, valence, energy, speechiness, tempo, danceability, mode  = cp.get_track_features()
-
-    msg = [acousticness, valence, energy, speechiness, tempo, danceability, mode]
-  
-    client.send_message("/spotify_return", "{}".format(msg))
-
-
-def login():
-    cid = '49e612edb8144e78befdfceaf0612429'
-    secret = '73fab72888874b4483f74f64ffad137c'
-    client_credentials_manager = SpotifyClientCredentials(
-        client_id=cid, client_secret=secret)
-    token = client_credentials_manager.get_access_token()
-    # access_token = token["access_token"]
-    print("\nplease go to this link and generate your token, checking user-read-private and user-top-read")
-    print("https://developer.spotify.com/console/get-current-user/")
-    access_token = input("Enter your token: ")
-
-    return access_token
-
-
-
+# handshake with processing
+def pingpong(message_id):
+    print(message_id,"OSC ID")
+    client.send_message("/pong", "0")
+    print("pong sent successfully!")
 
 # function for handling style transfer requests
-def run_style_transfer(message_id, acousticness, valence, content_image):
+def run_style_transfer(message_id, acousticness, valence, energy, speechiness, content_image):
 # format is used to format the numbers for string values instead of objects:
     print(message_id,"OSC ID")
     print("acousticness -> ", acousticness)
     print("valence -> ", valence)
+    print("energy -> ", energy)
+    print("speechiness -> ", speechiness)
     print("content image -> ", content_image)
 
-    process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + content_image).read()
+    process_out = os.popen('python style_transfer_demo.py ' + str(acousticness) + ' ' + str(valence) + ' ' + str(energy) + ' ' + str(speechiness) + ' ' + content_image).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
         client.send_message("/style_return", "0")
@@ -139,7 +50,8 @@ def run_style_transfer(message_id, acousticness, valence, content_image):
 def run_take_photo(message_id, participant_id):
     print(message_id,"OSC ID")
     print("participant_id -> ", participant_id)
-
+    print('photo taken and face obtained!')
+    client.send_message("/photo_return", "0")
     process_out = os.popen('python take_photo_demo.py ' + str(participant_id)).read()
     # check that the last character (actually, last two to be sure) is the exit status 0
     if int(process_out[-2:]) == 0:
@@ -167,9 +79,10 @@ if __name__ == "__main__":
 
     # This links a messageID to a function. 
     # That is, when a message with a given ID is received, the given function is run:
-    dispatcher.map("/spotify",sendvalues)
+    #dispatcher.map("/spotify",sendvalues)
     dispatcher.map("/style",run_style_transfer)
     dispatcher.map("/photo",run_take_photo)
+    dispatcher.map("/ping",pingpong)
 
     
     server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)

@@ -26,5 +26,6 @@ urlpatterns = [
     path('redirect', spotify_callback),
     path('is-authenticated', IsAuthenticated.as_view()),
     path('top-track', TopTrack.as_view()),
-    path('get_msgs', util.get_msgs, name="get_msgs")
+    path('get_msgs', util.get_msgs, name="get_msgs"),
+    path('delete_all', util.deleteAllFromSpotifyValues, name="delete_all")
 ]

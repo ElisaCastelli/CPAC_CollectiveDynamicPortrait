@@ -1,10 +1,9 @@
-
 class SpotifyParameter{
   
   float acousticness, valence, energy, speechiness, tempo, danceability, mode;
-  String reqString;
+  String request_string;
   
-  SpotifyParameter(float acousticness,float valence,float energy,float speechiness,float tempo,float danceability,float mode, String reqString){
+  SpotifyParameter(float acousticness,float valence,float energy,float speechiness,float tempo,float danceability,float mode, String request_string){
     this.acousticness = acousticness;
     this.valence = valence;
     this.energy = energy;
@@ -12,7 +11,7 @@ class SpotifyParameter{
     this.tempo = tempo;
     this.danceability = danceability;
     this.mode = mode;
-    this.reqString = reqString;
+    this.request_string = request_string;
   }
   
   SpotifyParameter(String message){
@@ -55,7 +54,7 @@ class SpotifyParameter{
     return mode;
   }
 
-  String getReqString(){
-    return reqString;  
+  String getRequest_string(){
+    return request_string;  
   }
 }
