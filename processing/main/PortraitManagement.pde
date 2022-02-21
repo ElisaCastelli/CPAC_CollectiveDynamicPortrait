@@ -63,8 +63,8 @@ void plotSmallImage(int image, int img_height, int img_width){
 
   pos_image=new PVector[total_parts];
 
-  int spacing_x=2;
-  int spacing_y=2;
+  int spacing_x=0;
+  int spacing_y=0;
   int index=0;
 
   int small_images_width=img_width/N_IMAGE_X;
@@ -74,7 +74,7 @@ void plotSmallImage(int image, int img_height, int img_width){
     for(int x=0;x< N_IMAGE_X; x++){
       // add current image part to small_images
       small_images[index + total_parts*image]=img[image].get(x*small_images_width,  y*small_images_height,  small_images_width,  small_images_height);
-      pos_image[index]= new PVector(displayWidth/2 - img_width*N_IMAGE_X/4 + x *(small_images_width + spacing_x), displayHeight/2 - img_height*N_IMAGE_Y/4 +  y *(small_images_height + spacing_y));
+      pos_image[index]= new PVector(displayWidth/2 - img_width/2 + x *(small_images_width + spacing_x), displayHeight/2 - img_height/2 +  y *(small_images_height + spacing_y));
       index++;
     }
   }

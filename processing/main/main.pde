@@ -13,18 +13,49 @@ STATI:
 import oscP5.*;
 import netP5.*;
 import processing.video.*;
+import peasy.*;
+import ddf.minim.*;
+
+/* dynamic background */
+PeasyCam cam;
+Minim minim;
+AudioPlayer player;
+float time_background;
+float x1 (float t){
+  return sin(t/10)*500 - tan(t/20)*200;
+}
+
+float y1 (float t){
+  return tan(-t/20)*300+sin(t/20)*200;
+}
+
+float x2 (float t){
+  return sin(t/10)*500+ tan(t/10)*200;
+}
+
+float y2 (float t){
+  return -cos(t/20)*300+ cos(t/12)*20;
+}
+
+
 
 /* image plot and division */
 
 // number of rows/columns of division
-final int N_IMAGE_X=2;
-final int N_IMAGE_Y=2;
-final int total_parts=N_IMAGE_X * N_IMAGE_Y;
+int n_max_users = 9;
+//int n_images;
+int current_n_users = 5;
+int N_IMAGE_X;
+int N_IMAGE_Y;
+int total_parts;
+int frame_h;
+int frame_w;
 // for now number of images coincides with total parts
 
 PImage[] small_images;
 PVector[] pos_image;
 PImage[] img;
+PImage frame;
 
 
 /* spotify */
@@ -62,15 +93,80 @@ boolean MAIN = true;
 boolean PHOTO = false;
 boolean PROCESSING = false;
 
+//effects
+float transparency = 0;
+float transparency_2 = 0;
+
+void settings(){
+  size(displayWidth,displayHeight);
+  
+  switch(current_n_users){
+    case 1:
+      N_IMAGE_X=1;
+      N_IMAGE_Y=1;
+    break;
+    case 2:
+      N_IMAGE_X=2;
+      N_IMAGE_Y=1;
+    break;
+    case 3:
+      N_IMAGE_X=1;
+      N_IMAGE_Y=3;
+    break;
+    case 4:
+      N_IMAGE_X=2;
+      N_IMAGE_Y=2;
+    break;
+    case 5:
+      N_IMAGE_X=5;
+      N_IMAGE_Y=1;
+    break;
+    case 6:
+     N_IMAGE_X=3;
+     N_IMAGE_Y=2;
+    break;
+    case 7:
+     N_IMAGE_X=1;
+     N_IMAGE_Y=7;
+     break;
+    case 8:
+     N_IMAGE_X=4;
+     N_IMAGE_Y=2;
+     break;
+    case 9:
+     N_IMAGE_X=3;
+     N_IMAGE_Y=3;
+     break;
+  }
+}
+
 
 void setup() {
+  background(0);
   django_communication = new API_Client();
   django_communication.deleteAll(); //svuoto il database
   //size(displayWidth,displayHeight,P3D);
-  size(displayWidth,displayHeight);
-  frameRate(1);
+
+  frameRate(24);
   timePast=millis();
   timeInterval=2000.0f;
+  
+  frame = loadImage("frame.png");
+  frame_h = int(1.27* height/2);
+  frame_w = int(1.53* height/2);
+  frame.resize(frame_w, frame_h);
+  total_parts = N_IMAGE_X * N_IMAGE_Y;
+  //n_images = current_n_users;
+  
+  /* background */
+  cam=new PeasyCam(this,180);
+  cam.setMinimumDistance(50);
+  cam.setMaximumDistance(500);
+  minim=new Minim(this);
+  player=minim.loadFile("multitrack.wav");
+  player.play();
+  player.loop();
+  
   
   oscP5 = new OscP5(this, 4321);
   font =createFont("GOGOIA-Regular.ttf",200);
@@ -93,62 +189,127 @@ void textFade(){
 
 void draw() {
   //set common parameters
-  background(255);
+  background(0);
+  //noStroke();
+  //fill(255, 255, 255);
+  //rect(0,0, width, height/7);
   textAlign(CENTER);
   textFont(font);
-  fill(44,100,172);
-  noStroke();
+  fill(255, 255, 255);
   
+  pushMatrix();
+  translate(width/8,height/2);
+  scale(0.3,0.3);
+  for(int j=0; j<player.bufferSize()-1; j++){
+  
+  strokeWeight(abs(1+player.right.get(j)*100));
+  
+ 
+  }
+
+  for (int i=0; i<90; i++){
+    strokeCap(ROUND);
+    stroke(179, 229, 252);
+    line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+    stroke(240, 98, 146); 
+    rect(x1(time_background+i),y1(time_background+i),5,5);
+    rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
+    
+  }
+  
+  
+  
+   popMatrix();
+   
+   
+   pushMatrix();
+  translate(7*width/8,height/2);
+  scale(0.3,0.3);
+  for(int j=0; j<player.bufferSize()-1; j++){
+  
+  strokeWeight(abs(1+player.right.get(j)*100));
+  
+ 
+  }
+
+  for (int i=0; i<90; i++){
+    strokeCap(ROUND);
+    stroke(240, 98, 146); 
+    rect(x1(time_background+i),y1(time_background+i),5,5);
+    rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
+    stroke(179, 229, 252);
+    line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+        
+  }
+  
+  time_background+=0.03;
+  
+   popMatrix(); 
+    
   //plot title
   textSize(width/18);
-  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/11);
-  
-  //plot QR code
-  QR = loadImage("QR_heroku.png");
-  image(QR, 11 * width/12, 10*height/12, width/15, width/15);
+  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/15);
   
   //plot INSTRUCTION according to the actual STATE
   if (MAIN){
     println("back in main!");
     updatePortrait();
-    textSize(width/35);
-    text("Scan the QR and press enter to join", width/2, 1.5 * height/9);
+    textSize(width/38);
+    textFade();
+    fill(255, 255, 255, textAlpha);
+    text("Scan the QR and press enter to join", width/2, 1.5 * height/12);
   }
   else if(PHOTO){
       println("take a photo");
-      textSize(width/35);
-      text("Press ENTER and say Cheese...!", width/2, 1.5 * height/9);
+      textSize(width/38);
+      text("Press ENTER and say Cheese...!", width/2, 1.5 * height/12);
   }
   else if (PROCESSING){
       println("relax");
-      textSize(width/35);
-      text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, 1.5 * height/9);
+      textSize(width/38);
+      text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, 1.5 * height/12);
   }
 
   // plot WARNINGS
   
   if (warning_server){
       textFont(font);
-      textSize(width/40);
+      textSize(width/45);
       fill(255,20,20);
-      text("server not connected", width/8, height/9);
+      text("server not connected", width/8, height/17);
   }
   
   if (warning_auth){
       textFont(font);
-      textSize(width/40);
+      textSize(width/45);
       fill(255,20,20);
-      text("remember to scan the qr", 7 * width/8, height/9);
+      text("remember to scan the qr", 7 * width/8, height/17);
   }
   
-  // plot the portrait
-  for(int index=0; index<img.length;index++){
+  
+  
+   transparency_2+=2;
+    tint(255, transparency_2);
+    // plot the portrait
+    for(int index=0; index<img.length;index++){
       for(int image=0;image<img.length;image++){
         // for now just follow sequential order
         if (index == image)
           image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
       }
     }
+  
+  
+  /* PORTRAIT FRAME */
+  transparency+=5;
+  tint(255, transparency);
+  image(frame,pos_image[0].x- frame.width/5.7, pos_image[0].y- frame.width/11);
+  
+  
+  
+  //plot QR code
+  QR = loadImage("QR_heroku.png");
+  image(QR, 11 * width/12, 10*height/12, width/15, width/15);
 }
 
 void keyPressed(){

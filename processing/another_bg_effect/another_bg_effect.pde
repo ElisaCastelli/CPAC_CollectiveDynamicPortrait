@@ -6,7 +6,6 @@ Minim minim;
 AudioPlayer player;
 
 float t;
-float a=0;
 PImage img;
 
 
@@ -27,7 +26,7 @@ void setup(){
 void draw(){
   background(0);
   
-    translate (width/4-100,height/2);
+  translate (width/4-100,height/2);
   
   for(int j=0; j<player.bufferSize()-1; j+=2){
   
@@ -38,14 +37,13 @@ void draw(){
 
   for (int i=0; i<90; i++){
     strokeCap(ROUND);
-  line(x1(t+i),y1(t+i),x2(t+i),y2(t+i));
-  
-   stroke(192,192,192);
-   strokeCap(ROUND);
-   line(x1(t+i)+1100,y1(t+i),x2(t+i)+1100,y2(t+i));
-   stroke(255,255,255);
-   rect(x1(t+i),y1(t+i),5,5);
-  rect(x1(t+i)+1100,y1(t+i),5,5);
+    line(x1(t+i),y1(t+i),x2(t+i),y2(t+i));
+    stroke(192,192,192);
+    strokeCap(ROUND);
+    line(x1(t+i)+width/2,y1(t+i),x2(t+i)+width/2,y2(t+i));
+    stroke(255,255,255);
+    rect(x1(t+i)- width/6,y1(t+i),5,5);
+    rect(x1(t+i)+1100,y1(t+i),5,5);
   }
   
   t+=0.03;
@@ -61,7 +59,6 @@ float y1 (float t){
 }
 
 float x2 (float t){
- 
   return sin(t/10)*500+ tan(t/10)*200;
 }
 
