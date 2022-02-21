@@ -16,7 +16,6 @@ PImage[] small_images;
 PVector[] pos_image;
 PImage[] img;
 int value=1;
-//int r=int(random(total_parts));
 
 //text
 
@@ -30,6 +29,22 @@ PImage frame;
 float transparency=0;
 
 
+
+float x1 (float t){
+  return sin(t/10)*500 - tan(t/20)*200;
+}
+
+float y1 (float t){
+  return tan(-t/20)*300+sin(t/20)*200;
+}
+
+float x2 (float t){
+  return sin(t/10)*500+ tan(t/10)*200;
+}
+
+float y2 (float t){
+  return -cos(t/20)*300+ cos(t/12)*20;
+}
 
 void settings(){
   size(displayWidth,displayHeight,P3D);
@@ -160,9 +175,15 @@ void draw() {
 
  
 if(value==0){
-  background(0);
+ 
+
+  
+  
   //image(qrcodeImage,10,10);
   //image(qrcodeImage,displayWidth/2-qrcodeImage.width,  displayHeight/2-qrcodeImage.height,  500,500); 
+
+
+
 // plot one part for each image
 transparency+=0.8;
 tint(255, transparency);
@@ -174,12 +195,16 @@ for(int index=0; index<img.length;index++){
      
      image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
       
-  }
+     }
+   }
+}
+  
+ 
 }
 
-  }
-  
-}
+
+
+
 
 
 void keyPressed(){

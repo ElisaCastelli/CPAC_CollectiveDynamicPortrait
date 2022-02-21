@@ -1,28 +1,55 @@
+import peasy.*;
+import ddf.minim.*;
 
-
+PeasyCam cam;
+Minim minim;
+AudioPlayer player;
 
 float t;
+float a=0;
+PImage img;
+
 
 void setup(){
-  background(0);
-  size(displayWidth, displayHeight);
+   size(displayWidth, displayHeight);
+   cam=new PeasyCam(this,180);
+   cam.setMinimumDistance(50);
+   cam.setMaximumDistance(500);
+   minim=new Minim(this);
+   player=minim.loadFile("dontstop_level_3.wav");
+   player.play();
+   frameRate(20);
+ 
 }
+
+
 
 void draw(){
   background(0);
-  stroke(255);
-  strokeWeight(0.5);
+  
+    translate (width/4-100,height/2);
+  
+  for(int j=0; j<player.bufferSize()-1; j+=2){
+  
+  strokeWeight(abs(1+player.right.get(j)*100));
+  println(abs(1+player.right.get(j)*50));
  
-  translate (width/4-100,height/2);
-  for (int i=0; i<100; i++){
+  }
+
+  for (int i=0; i<90; i++){
+    strokeCap(ROUND);
   line(x1(t+i),y1(t+i),x2(t+i),y2(t+i));
-   stroke(204,153,255);
+  
+   stroke(192,192,192);
+   strokeCap(ROUND);
    line(x1(t+i)+1100,y1(t+i),x2(t+i)+1100,y2(t+i));
-   stroke(0,128,128);
+   stroke(255,255,255);
    rect(x1(t+i),y1(t+i),5,5);
   rect(x1(t+i)+1100,y1(t+i),5,5);
   }
-  t+=0.05;
+  
+  t+=0.03;
+  
 }
 
 float x1 (float t){
@@ -34,6 +61,7 @@ float y1 (float t){
 }
 
 float x2 (float t){
+ 
   return sin(t/10)*500+ tan(t/10)*200;
 }
 

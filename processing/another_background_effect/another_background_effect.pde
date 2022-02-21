@@ -8,7 +8,7 @@ void setup(){
 } 
 
 void draw(){
- translate(width/2,height/2);
+ //translate(width/2,height/2);
  float mag=400;
  float s=5;
 
