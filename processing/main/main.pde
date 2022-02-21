@@ -1,13 +1,5 @@
 /*
-Processing flowchart:
-- click per partecipare                             DONE
-- qrcode appare                                     in progress
-- processing riceve valori spotify                  in progress
-- esecuzione foto                                   DONE
-- applicazione ritaglio,                            DONE
-                divisione,                          DONE
-                style transfer                      DONE
-- aggiornamento quadro, attesa per successivo click DONE
+NOTE
 
 quadro sempre presente, all'inizio cornice vuota
 
@@ -17,10 +9,6 @@ STATI:
 - PROCESSING - run style transfer
 
 */
-
-
-
-
 
 import oscP5.*;
 import netP5.*;
@@ -41,7 +29,9 @@ PImage[] img;
 
 /* spotify */
 
-String message_receiver="";
+String photo_return="";
+String style_transfer_return = "";
+String pong = "";
 ArrayList<SpotifyParameter> participants_spotify_values;
 
 /*QR image*/
@@ -51,7 +41,7 @@ PImage QR;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 API_Client client;
-String msgs;
+OscMessage myMessage;
 
 /* font */
 PFont font;
@@ -60,11 +50,9 @@ float timePast;
 int textFade=4;
 int textAlpha=200;
 
-boolean style_done = false;
-boolean new_user_arrived = true;
-boolean mouse_first_click = false;
-boolean photo_taken = false;
 boolean warning_auth = false;
+boolean warning_server = false;
+boolean error_generic = false;
 
 // STATES
 boolean MAIN = true;
@@ -77,7 +65,7 @@ void setup() {
   client.deleteAll(); //svuoto il database
   //size(displayWidth,displayHeight,P3D);
   size(displayWidth,displayHeight);
-  frameRate(10);
+  frameRate(1);
   timePast=millis();
   timeInterval=2000.0f;
   
@@ -86,6 +74,10 @@ void setup() {
   participants_spotify_values = new ArrayList<SpotifyParameter>();
 
   myRemoteLocation = new NetAddress("127.0.0.1", 5005);
+  
+  // ping
+  myMessage = new OscMessage("/ping");
+  oscP5.send(myMessage, myRemoteLocation);
 }
 
 void textFade(){
@@ -97,194 +89,219 @@ void textFade(){
 }
 
 void draw() {
-
-  if (new_user_arrived){
+  
+  if (MAIN){
+    println("back in main!");
     background(255);
     textAlign(CENTER);
     textFont(font);
-    noStroke();
     fill(44,100,172);
-    textSize(200);
-    text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/6);
-    textSize(120);
-    textFade();
-    fill(44,100,172,textAlpha);
+    noStroke();
+    updatePortrait();
+    textSize(150);
+    text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/10);
+    textSize(100);
+    fill(44,100,172);
     QR = loadImage("QR_heroku.png");
-    image(QR, width/2, 3*height/5, 200, 200);
-    text("Scan the QR code and then click here to start!", width/2, height/2);
+    image(QR, 11 * width/12, 10*height/12, 200, 200);
+    text("Scan the QR and press enter to join", width/2, 1.5 * height/8);
+    // plot one part for each image
+    for(int index=0; index<img.length;index++){
+      for(int image=0;image<img.length;image++){
+        // for now just follow sequential order
+        if (index == image)
+          image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
+      }
+    }
   }
-
-   if(message_receiver != ""){
-     
-     //if(participants_spotify_values.size()==0 || !sp.checkEqual(participants_spotify_values.get(participants_spotify_values.size()-1))){
+   
+   else if(PHOTO){
+     println("take a photo");
+      background(255);
+      textAlign(CENTER);
+      textFont(font);
+      fill(44,100,172);
+      noStroke();
+      //if(participants_spotify_values.size()==0 || !sp.checkEqual(participants_spotify_values.get(participants_spotify_values.size()-1))){
       //  participants_spotify_values.add(sp);
       //  println(sp.getReqString());
       //}
-      background(255);
-      textAlign(CENTER);
       textSize(120);
-      noStroke();
       fill(44,100,172);
       text("Press ENTER and say Cheese...!", width/2, height/2);
-    }
-
-   if (style_done){
-     updatePortrait();
-     background(255);
-     textAlign(CENTER);
-     textSize(100);
-     noStroke();
-     fill(44,100,172);
-     QR = loadImage("QR_heroku.png");
-     image(QR, 3*width/4, 2*height/5, 200, 200);
-     text("A new person arrives...", width/2, height/8); // aggiungo la frase in alto sopra le foto
-     text("Scan the QR and then double click to join", width/2, 2*height/8);
-     // plot one part for each image
-     for(int index=0; index<img.length;index++){
-       for(int image=0;image<img.length;image++){
-         // for now just follow sequential order
-         if (index == image)
-           image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
-       }
-     }
    }
-
-   //if (mouse_first_click){
-   //   background(255);
-   //   textAlign(CENTER);
-   //   textSize(120);
-   //   noStroke();
-   //   fill(44,100,172);
-   //   text("go check the server's command line", width/2, height/2);
-   //}
-
-   if (photo_taken){
+   else if (PROCESSING){
+     println("relax");
       background(255);
       textAlign(CENTER);
       textSize(120);
-      noStroke();
       fill(44,100,172);
+      noStroke();
       text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, height/2);
    }
 
-}
-
-
-void mouseClicked(){
-  
-  if(message_receiver == "" && new_user_arrived){
-   
-    new_user_arrived = false;
-    style_done = false;
-    
-    //OscMessage myMessage = new OscMessage("/spotify");
-    //oscP5.send(myMessage, myRemoteLocation);
-    
-  }else if (style_done){
-    new_user_arrived = true;
+  if (warning_server){
+    textFont(font);
+    textSize(80);
+    fill(255,20,20);
+    text("server not connected", width/8, height/8);
   }
+  
+  if (warning_auth){
+    textFont(font);
+    textSize(80);
+    fill(255,20,20);
+    text("ohhhh", 7 * width/8, height/8);
+  }
+
 }
 
 void keyPressed(){
-  OscMessage myMessage;
   if (key == '\n'){
     
-    // three STATES
-    if (MAIN){
-      SpotifyParameter temp = client.get_msgs();
-      // check if user did not give authorizaton with qr code
-      if(temp!=null && ! participants_spotify_values.get(participants_spotify_values.size()-1).checkEqual(temp)) {
-        participants_spotify_values.add(temp);
-        println("Features received:");
-        println(temp.getReqString()); // song name needs to be added
-        
-        MAIN = false;
-        PHOTO = true;
-        warning_auth = false;
-      }
-      else{
-        warning_auth = true;
-      }
-        
-    }
+    // new ping
+    myMessage = new OscMessage("/ping");
+    oscP5.send(myMessage, myRemoteLocation);
     
-    else if(PHOTO){
+    //check if server is running
+    if (pong == ""){
+      warning_server = true;
+      println("server is not running!");
+    }
+    else {
+      println("pong received...");
+      //set pong to empty for constant control
+      pong = "";
       
+      warning_server = false;
+      // three STATES
+      if (MAIN){
+        SpotifyParameter temp = client.get_msgs();
+        // check if user did not give authorizaton with qr code
+        if(temp!=null){
+          // add the user to the value list if he is the first participant OR, if he is not, I check that he didn't participate in the previous photo
+          if (!error_generic && (participants_spotify_values.size() == 0 || !participants_spotify_values.get(participants_spotify_values.size()-1).checkEqual(temp))){
+            participants_spotify_values.add(temp);
+            
+            println("Features received:");
+            println(temp.getReqString()); // song name needs to be added
+            
+            // change STATE
+            MAIN = false;
+            PHOTO = true;
+            warning_auth = false;
+            
+          }
+          // check that, if an error occoured, The participant is the same or still the first one, so he can skip giving again authorization
+          else if (error_generic && (participants_spotify_values.size() == 0 || participants_spotify_values.get(participants_spotify_values.size()-1).checkEqual(temp))){
+            println("Features received:");
+            println(temp.getReqString()); // song name needs to be added
+            
+            // change STATE
+            MAIN = false;
+            PHOTO = true;
+            error_generic = false;
+            warning_auth = false;
+          }
+          // last case: no error occourred, but participant forgot to give the authorization. 
+          else if (!error_generic && participants_spotify_values.get(participants_spotify_values.size()-1).checkEqual(temp)){
+            warning_auth = true;
+          }
+        }
+        else{
+          warning_auth = true;
+        }
+      }
+      
+      else if(PHOTO){
+  
+        // ask python to take photo
+        myMessage = new OscMessage("/photo");
+        myMessage.add(participants_spotify_values.size());
+        oscP5.send(myMessage, myRemoteLocation);
+        
+        // for final project is better to wait for message from python server
+        // wait until face file is created
+                
+        try{
+          do{
+            delay(1000);
+            if (! photo_return.equals("") && ! photo_return.equals("0")){
+                            
+              // change STATE
+              PHOTO = false;
+              MAIN = true;
+              error_generic = true;
+              photo_return = "";
+              break;
+            }
+            
+          } while(! fileExistsCaseSensitive(str(participants_spotify_values.size()) + "_face.jpg"));
+        }catch (Exception e){
+          println("error: " + e);
+        }
+        // change STATE
+        PHOTO = false;
+        PROCESSING = true;
+        photo_return = "";
+      }
+      else if(PROCESSING){
 
-      // ask python to take photo
-      myMessage = new OscMessage("/photo");
-      myMessage.add(participants_spotify_values.size());
-      oscP5.send(myMessage, myRemoteLocation);
-      
-      // for final project is better to wait for message from python server
-      // wait until face file is created
-      try{
-        do{
-          delay(1000);
-          print((str(participants_spotify_values.size()) + "_face.jpg"));
-          
-          //if (message_receiver)
-          
-        } while(! fileExistsCaseSensitive(str(participants_spotify_values.size()) + "_face.jpg"));
-      }catch (Exception e){
-        println("error: " + e);
-      }
-      
-    }
-    else if(PROCESSING){
-      myMessage = new OscMessage("/style");
-      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
-      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
-      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getEnergy()); //prendo l'energy dagli ultimi valori aggiunti
-      myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getSpeechiness());  //prendo la speechiness dagli ultimi valori aggiunti
-      //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
-      //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
-      //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
-      myMessage.add(str(participants_spotify_values.size()) + "_face.jpg");
-
-      /* Send photo and params to style_transfer script */
-      oscP5.send(myMessage, myRemoteLocation);
-    }
-  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    // only enter is accepted
-    if (key == '\n' ) {
-    
-    
-    println("mando osc style");
-    // send stylized photo
         
+        myMessage = new OscMessage("/style");
+        myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
+        myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
+        myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getEnergy()); //prendo l'energy dagli ultimi valori aggiunti
+        myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getSpeechiness());  //prendo la speechiness dagli ultimi valori aggiunti
+        //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
+        //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
+        //myMessage.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
+        myMessage.add(str(participants_spotify_values.size()) + "_face.jpg");
+  
+        /* Send photo and params to style_transfer script */
+        oscP5.send(myMessage, myRemoteLocation);
+                        
+        try{
+          do{
+            delay(1000);
+            println(PROCESSING);
+            if (! style_transfer_return.equals("") && ! style_transfer_return.equals("0")){
+              // change STATE
+              PROCESSING = false;
+              MAIN = true;
+              error_generic = true;
+              style_transfer_return = "";
+              break;
+            }
+            
+          } while(! style_transfer_return.equals("0") );
+        }catch (Exception e){
+          println("error: " + e);
+        }
+        
+        println("finito");
+        
+        // change STATE
+        PROCESSING = false;
+        MAIN = true;
+        style_transfer_return = "";
+      }
+    }
   }
 }
 
 void oscEvent(OscMessage theOscMessage) {
   
   if(theOscMessage.checkAddrPattern("/photo_return")==true){
-    message_receiver = theOscMessage.get(0).stringValue();
+    photo_return = theOscMessage.get(0).stringValue();
   }
-  
-  //if(theOscMessage.checkAddrPattern("/spotify_return")==true){
-    
-  //  //leggo i valori ricevuti
-  //  message_receiver = theOscMessage.get(0).stringValue();
-    
-  //  println("Spotify parameters: " + message_receiver);
-  //  SpotifyParameter sp = new SpotifyParameter(message_receiver);
-  //  participants_spotify_values.add(sp);
-  //  mouse_first_click = false;
-  //}
   
   if(theOscMessage.checkAddrPattern("/style_return")==true){
-    style_done = true;
-    photo_taken = false;
+    style_transfer_return = theOscMessage.get(0).stringValue();
   }
+  
+  if(theOscMessage.checkAddrPattern("/pong")==true){
+    pong = theOscMessage.get(0).stringValue();
+  }
+  
 }

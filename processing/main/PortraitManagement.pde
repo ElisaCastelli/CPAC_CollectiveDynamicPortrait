@@ -7,7 +7,15 @@ void updatePortrait(){
   small_images=new PImage[total_parts*total_parts];
   //File dataFolder2 = new File(dataPath("/Users/elisacastelli/Documents/GitHub/CPAC_CollectiveDynamicPortrait/pictures"));
 
-  if(participants_spotify_values.size()<total_parts){
+  
+  if(participants_spotify_values.size() == 0){
+    for(int image=0; image < img.length; image++){
+      img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
+      plotSmallImage(image, img_height, img_width);
+    }
+  }
+  
+  else if(participants_spotify_values.size()<total_parts){
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
         lastPhotoExistent=image;
