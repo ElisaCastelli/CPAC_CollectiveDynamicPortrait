@@ -7,8 +7,8 @@ void updatePortrait(){
   small_images=new PImage[total_parts*total_parts];
   //File dataFolder2 = new File(dataPath("/Users/elisacastelli/Documents/GitHub/CPAC_CollectiveDynamicPortrait/pictures"));
 
-  
-  if(participants_spotify_values.size() == 0){
+  //
+  if(current_n_users == 0){
     for(int image=0; image < img.length; image++){
       //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
       img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
@@ -16,7 +16,7 @@ void updatePortrait(){
     }
   }
   
-  else if(participants_spotify_values.size()<total_parts){
+  else if(current_n_users<total_parts){
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
         lastPhotoExistent=image;
@@ -29,7 +29,7 @@ void updatePortrait(){
       plotSmallImage(image, img_height, img_width);
     }
   }
-  else if(participants_spotify_values.size() == total_parts){
+  else if(current_n_users == total_parts){
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
         img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
@@ -41,8 +41,8 @@ void updatePortrait(){
       }
       plotSmallImage(image, img_height, img_width);
     }
-  }else if (participants_spotify_values.size() > total_parts){
-    for(int index=participants_spotify_values.size() - img.length; index<participants_spotify_values.size(); index++){
+  }else if (current_n_users > total_parts){
+    for(int index=current_n_users - img.length; index<participants_spotify_values.size(); index++){
       int image = index % total_parts;    // usare il modulo è piu figo e leggibile
       if(fileExistsCaseSensitive("stylized"+str(index+1)+"_face"+".jpg")){
           img[image]=loadImage("../../../pictures/" + "stylized" + str(index+1) + "_face" + ".jpg");
@@ -73,6 +73,9 @@ void plotSmallImage(int image, int img_height, int img_width){
   for(int y=0;y< N_IMAGE_Y; y++){
     for(int x=0;x< N_IMAGE_X; x++){
       // add current image part to small_images
+      println("check1"+current_n_users);
+      println("check2"+N_IMAGE_X, N_IMAGE_Y);
+                                                         // get only the portion of image corresponding to the current subdivision
       small_images[index + total_parts*image]=img[image].get(x*small_images_width,  y*small_images_height,  small_images_width,  small_images_height);
       pos_image[index]= new PVector(displayWidth/2 - img_width/2 + x *(small_images_width + spacing_x), displayHeight/2 - img_height/2 +  y *(small_images_height + spacing_y));
       index++;

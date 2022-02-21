@@ -34,6 +34,7 @@ class API_Client{
         msgs[5] = JSONobj.getFloat("danceability");
         msgs[6] = JSONobj.getFloat("mode");
         sp = new SpotifyParameter(msgs[0],msgs[1],msgs[2],msgs[3],msgs[4],msgs[5],msgs[6], req.getContent());
+        println(req.getContent());
       }
     }
     else{

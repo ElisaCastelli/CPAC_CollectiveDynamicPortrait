@@ -44,7 +44,7 @@ float y2 (float t){
 // number of rows/columns of division
 int n_max_users = 9;
 //int n_images;
-int current_n_users = 5;
+int current_n_users = 1;
 int N_IMAGE_X;
 int N_IMAGE_Y;
 int total_parts;
@@ -100,7 +100,12 @@ float transparency_2 = 0;
 void settings(){
   size(displayWidth,displayHeight);
   
-  switch(current_n_users){
+  updatePortraitDimensions();
+}
+
+
+void updatePortraitDimensions(){
+    switch(current_n_users){
     case 1:
       N_IMAGE_X=1;
       N_IMAGE_Y=1;
@@ -138,8 +143,9 @@ void settings(){
      N_IMAGE_Y=3;
      break;
   }
+  
+  total_parts = N_IMAGE_X * N_IMAGE_Y;
 }
-
 
 void setup() {
   background(0);
@@ -164,8 +170,8 @@ void setup() {
   cam.setMaximumDistance(500);
   minim=new Minim(this);
   player=minim.loadFile("multitrack.wav");
-  player.play();
-  player.loop();
+  //player.play();
+  //player.loop();
   
   
   oscP5 = new OscP5(this, 4321);
@@ -197,58 +203,7 @@ void draw() {
   textFont(font);
   fill(255, 255, 255);
   
-  pushMatrix();
-  translate(width/8,height/2);
-  scale(0.3,0.3);
-  for(int j=0; j<player.bufferSize()-1; j++){
   
-  strokeWeight(abs(1+player.right.get(j)*100));
-  
- 
-  }
-
-  for (int i=0; i<90; i++){
-    strokeCap(ROUND);
-    stroke(179, 229, 252);
-    line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
-    stroke(240, 98, 146); 
-    rect(x1(time_background+i),y1(time_background+i),5,5);
-    rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
-    
-  }
-  
-  
-  
-   popMatrix();
-   
-   
-   pushMatrix();
-  translate(7*width/8,height/2);
-  scale(0.3,0.3);
-  for(int j=0; j<player.bufferSize()-1; j++){
-  
-  strokeWeight(abs(1+player.right.get(j)*100));
-  
- 
-  }
-
-  for (int i=0; i<90; i++){
-    strokeCap(ROUND);
-    stroke(240, 98, 146); 
-    rect(x1(time_background+i),y1(time_background+i),5,5);
-    rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
-    stroke(179, 229, 252);
-    line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
-        
-  }
-  
-  time_background+=0.03;
-  
-   popMatrix(); 
-    
-  //plot title
-  textSize(width/18);
-  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/15);
   
   //plot INSTRUCTION according to the actual STATE
   if (MAIN){
@@ -258,6 +213,57 @@ void draw() {
     textFade();
     fill(255, 255, 255, textAlpha);
     text("Scan the QR and press enter to join", width/2, 1.5 * height/12);
+    
+    if  (participants_spotify_values.size() > 0){
+      pushMatrix();
+      translate(width/8,height/2);
+      scale(0.3,0.3);
+      for(int j=0; j<player.bufferSize()-1; j++){
+      
+      strokeWeight(abs(1+player.right.get(j)*100));
+      
+     
+      }
+    
+      for (int i=0; i<90; i++){
+        strokeCap(ROUND);
+        stroke(179, 229, 252);
+        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+        stroke(240, 98, 146); 
+        rect(x1(time_background+i),y1(time_background+i),5,5);
+        rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
+        
+      }
+      
+      
+      
+      popMatrix();
+       
+       
+      pushMatrix();
+      translate(7*width/8,height/2);
+      scale(0.3,0.3);
+      for(int j=0; j<player.bufferSize()-1; j++){
+      
+      strokeWeight(abs(1+player.right.get(j)*100));
+      
+     
+      }
+    
+      for (int i=0; i<90; i++){
+        strokeCap(ROUND);
+        stroke(240, 98, 146); 
+        rect(x1(time_background+i),y1(time_background+i),5,5);
+        rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
+        stroke(179, 229, 252);
+        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+            
+      }
+      
+      time_background+=0.03;
+      
+      popMatrix(); 
+    }
   }
   else if(PHOTO){
       println("take a photo");
@@ -275,15 +281,15 @@ void draw() {
   if (warning_server){
       textFont(font);
       textSize(width/45);
-      fill(255,20,20);
-      text("server not connected", width/8, height/17);
+      fill(255, 204, 128);
+      text("server not connected", width/8, height/9);
   }
   
   if (warning_auth){
       textFont(font);
       textSize(width/45);
-      fill(255,20,20);
-      text("remember to scan the qr", 7 * width/8, height/17);
+      fill(255, 204, 128);
+      text("remember to scan the qr", 7 * width/8, height/9);
   }
   
   
@@ -299,6 +305,10 @@ void draw() {
       }
     }
   
+  //plot title
+  textSize(width/18);
+  fill(255, 255, 255);
+  text("COLLECTIVE DYNAMIC PORTRAIT", width/2, height/13);
   
   /* PORTRAIT FRAME */
   transparency+=5;
@@ -318,6 +328,9 @@ void keyPressed(){
     // new ping
     my_message = new OscMessage("/ping");
     oscP5.send(my_message, local_server);
+    
+    current_n_users = participants_spotify_values.size();
+    updatePortraitDimensions();
     
     //check if server is running
     if (pong == ""){
@@ -379,30 +392,12 @@ void keyPressed(){
         // for final project is better to wait for message from python server
         // wait until face file is created
                 
-        try{
-          do{
-            delay(1000);
-            if (! photo_return.equals("") && ! photo_return.equals("0")){
-                            
-              // change STATE
-              PHOTO = false;
-              MAIN = true;
-              error_generic = true;
-              photo_return = "";
-              break;
-            }
-            
-          } while(! fileExistsCaseSensitive(str(participants_spotify_values.size()) + "_face.jpg"));
-        }catch (Exception e){
-          println("error: " + e);
-        }
-        // change STATE
-        PHOTO = false;
-        PROCESSING = true;
-        photo_return = "";
+        waitPhoto();
+
       }
       else if(PROCESSING){
-
+        println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users);
+        
         my_message = new OscMessage("/style");
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
@@ -416,28 +411,9 @@ void keyPressed(){
         /* Send photo and params to style_transfer script */
         oscP5.send(my_message, local_server);
                         
-        try{
-          do{
-            delay(1000);
-            println(PROCESSING);
-            if (! style_transfer_return.equals("") && ! style_transfer_return.equals("0")){
-              // change STATE
-              PROCESSING = false;
-              MAIN = true;
-              error_generic = true;
-              style_transfer_return = "";
-              break;
-            }
-            
-          } while(! style_transfer_return.equals("0") );
-        }catch (Exception e){
-          println("error: " + e);
-        }
+        waitStyleTransfer();
         
-        // change STATE
-        PROCESSING = false;
-        MAIN = true;
-        style_transfer_return = "";
+
       }
     }
   }
