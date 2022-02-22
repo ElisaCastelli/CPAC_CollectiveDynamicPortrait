@@ -1,4 +1,4 @@
-# Collective Dynamic Portrait - Work in progress...
+# Collective Dynamic Portrait 
 
 ## Abstract:
 
@@ -26,14 +26,14 @@ Each participant will also be able to move his hand in front of the painting in 
 
 The first demo developed works in a local way with a server Python which communicates with the Processing application using the OSC protocol, as shown in the workflow's picture. Currently the part regarding sound and Supercollider has not already been implemented.
 
-![Workflow](readme_images/workFlow.png)
+![Workflow](readme_images/workflow.jpg)
 
 Instead of using the QR code, the Spotify's token is asked directly to the user, then the values of acousticness and valence are computed and sent back to the  Processing application. 
 Consequently, the user will press enter in order to communicate to Python that he/she is ready to take a photo. Once the Python script shoots the picture, there will be an exchange of messages between Python and Processing to apply the right style transfer (according to acousticness and valence previously computed).
 Finally, when the style transfer is applied the final modified picture is saved and a portion of it will be shown in Processing.
 This process can be repeated everytime a new user wants to partecipate and contribute to the final artwork.
 
-![Possible final result](readme_images/possibleFinalResult.png)
+![Possible final result](readme_images/example.png)
 
 Group members: 
 * Francesco Zumerle 10801101
