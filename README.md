@@ -16,7 +16,7 @@ In particular:
 * The higher the speechiness the more concrete will be the subject of the portait used to make the style transfer. The lower the speechiness, the more abstract the portait used to make the style transfer.
 * The higher the energy the bolder will be the edges in the styke applied and viceversa
 
-![Example](readme_images/Style_example.jpg)
+![Example](readme_images/Style_example.png)
 
 In the meanwhile, also a sound will be produced, according to the data obtained from Spotify. Each person determines a different type of instrument used in the sound reproduced in loop. The instrument type is determined directly from the Spotify's audio features and each time an instrument is chosen we used grammars to build a loop. Each instrument is finally mixed with the others composing a unique sound that will be reproduced.
 
