@@ -2,8 +2,10 @@ void updatePortrait(){
   println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users);
   int img_height = displayHeight / 2;
   int img_width= displayHeight / 2;
+  int diff_users;
   int lastPhotoExistent = 0; //tengo memorizzato l'indice dell'ultima presente
-  updateImg();
+  if(MAIN)
+    updateImg();
   small_images=new PImage[total_parts*total_parts];
   //File dataFolder2 = new File(dataPath("/Users/elisacastelli/Documents/GitHub/CPAC_CollectiveDynamicPortrait/pictures"));
 
@@ -16,26 +18,15 @@ void updatePortrait(){
     plotSmallImage(0, img_height, img_width);
   }
   
-  /*else if(current_n_users<total_parts){
-    println("caso 1");
-    for(int image=0; image < img.length; image++){
-      if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
-        lastPhotoExistent=image;
-        img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
-        //img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
-      } else { //se non esiste la foto ristampo l'ultima presente
-        img[image]=loadImage("../../../pictures/" + "stylized" + str(lastPhotoExistent+1) + "_face" + ".jpg");
-        //img[image]=loadImage(dataFolder2+ "/stylized" + str(lastPhotoExistent+1) + "_face" + ".jpg");
-      }
-      plotSmallImage(image, img_height, img_width);
-    }
-  }*/
-  else /*if(current_n_users == total_parts)*/{
+  else /*if(current_n_users == total_parts) */{
     println("caso 2");
+    
+    diff_users = current_n_users - total_parts;
+    
     println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " eee" + total_parts);
-    for(int image=0; image < img.length; image++){
+    for(int image=0; image < total_parts; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
-        img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
+        img[image]=loadImage("../../../pictures/" + "stylized" + str(image + 1 + diff_users) + "_face" + ".jpg");
         //img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
       }
       else { // tengo questo else per sicurezza ma se funziona puoi toglierlo
@@ -44,15 +35,17 @@ void updatePortrait(){
       }
       plotSmallImage(image, img_height, img_width);
     }
-  }/*else if (current_n_users > total_parts){
+  } 
+  /*else if (current_n_users > total_parts) {
     println("caso 3");
-    for(int index=current_n_users - img.length; index<participants_spotify_values.size(); index++){
-      int image = index % total_parts;    // usare il modulo è piu figo e leggibile
-      if(fileExistsCaseSensitive("stylized"+str(index+1)+"_face"+".jpg")){
-          img[image]=loadImage("../../../pictures/" + "stylized" + str(index+1) + "_face" + ".jpg");
-          //img[image]=loadImage(dataFolder2 + "/stylized" + str(index+1) + "_face" + ".jpg");
+    diff_users = current_n_users - total_parts;
+    println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " eee" + total_parts);
+    for(int image=0; image < total_parts; image++){
+      if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
+        img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1 + diff_users) + "_face" + ".jpg");
+        //img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
       }
-      else {
+      else { // tengo questo else per sicurezza ma se funziona puoi toglierlo
         img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
         //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
       }
@@ -87,7 +80,7 @@ void plotSmallImage(int image, int img_height, int img_width){
 }
 
 void updatePortraitDimensions(){
-    switch(current_n_users){
+    switch(min(current_n_users, n_max_users)){
     case 0:
       N_IMAGE_X=1;
       N_IMAGE_Y=1;
@@ -124,7 +117,7 @@ void updatePortraitDimensions(){
      N_IMAGE_X=4;
      N_IMAGE_Y=2;
      break;
-    case 9:
+    default:
      N_IMAGE_X=3;
      N_IMAGE_Y=3;
      break;

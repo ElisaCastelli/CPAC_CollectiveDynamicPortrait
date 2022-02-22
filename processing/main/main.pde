@@ -109,7 +109,7 @@ void setup() {
   django_communication.deleteAll(); //svuoto il database
   //size(displayWidth,displayHeight,P3D);
 
-  frameRate(1);
+  frameRate(24);
   timePast=millis();
   timeInterval=2000.0f;
   
@@ -125,7 +125,7 @@ void setup() {
   cam.setMinimumDistance(50);
   cam.setMaximumDistance(500);
   minim=new Minim(this);
-  player=minim.loadFile("multitrack.wav");
+  //player=minim.loadFile("multitrack.wav");
   //player.play();
   //player.loop();
   
@@ -181,11 +181,13 @@ void draw() {
     
       for (int i=0; i<90; i++){
         strokeCap(ROUND);
-        stroke(179, 229, 252);
-        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
         stroke(240, 98, 146); 
         rect(x1(time_background+i),y1(time_background+i),5,5);
         rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
+        stroke(179, 229, 252);
+        strokeWeight(0.3);
+        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+        
         
       }
       
@@ -210,6 +212,7 @@ void draw() {
         rect(x1(time_background+i),y1(time_background+i),5,5);
         rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
         stroke(179, 229, 252);
+        strokeWeight(0.3);
         line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
             
       }
@@ -229,7 +232,7 @@ void draw() {
     //updatePortrait();
       println("relax");
       textSize(width/38);
-      text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, 1.5 * height/12);
+      text("When you feel ready, press enter to make the magic begin...", width/2, 1.5 * height/12);
   }
 
   // plot WARNINGS
@@ -263,7 +266,7 @@ void draw() {
   //updateImg();
   transparency_2+=2;
   tint(255, transparency_2);
-  println("dentro for" +  N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " imglength" + small_images.length);
+  println("dentro for" +  N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " imglength" + img.length);
   for(int index=0; index<img.length;index++){
       for(int image=0;image<img.length;image++){
         // for now just follow sequential order
@@ -296,7 +299,7 @@ void keyPressed(){
     oscP5.send(my_message, local_server);
     
     current_n_users = participants_spotify_values.size();
-    updatePortraitDimensions();
+    
     
     //check if server is running
     if (pong == ""){
@@ -321,10 +324,15 @@ void keyPressed(){
             println("Features received:");
             println(temp.getRequest_string()); // song name needs to be added
             
+            //lasdcio?
+            delay(100);
+            
             // change STATE
             MAIN = false;
             PHOTO = true;
             warning_auth = false;
+            
+            
             
           }
           // check that, if an error occoured, The participant is the same or still the first one, so he can skip giving again authorization
@@ -349,7 +357,7 @@ void keyPressed(){
       }
       
       else if(PHOTO){
-  
+        
         // ask python to take photo
         my_message = new OscMessage("/photo");
         my_message.add(participants_spotify_values.size());
@@ -357,13 +365,14 @@ void keyPressed(){
         
         // for final project is better to wait for message from python server
         // wait until face file is created
-        updatePortrait();        
+        //updatePortrait();        
         waitPhoto();
 
       }
       else if(PROCESSING){
+        
+        
         println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users);
-        updatePortrait();
         my_message = new OscMessage("/style");
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
@@ -376,9 +385,15 @@ void keyPressed(){
   
         /* Send photo and params to style_transfer script */
         oscP5.send(my_message, local_server);
-                        
-        waitStyleTransfer();
         
+        minim=new Minim(this);
+        player=minim.loadFile("sound11.wav");
+        player.play();
+        player.loop();
+        
+        
+        waitStyleTransfer();
+        updatePortraitDimensions();
 
       }
     }
