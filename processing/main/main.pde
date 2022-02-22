@@ -19,7 +19,8 @@ import ddf.minim.*;
 /* dynamic background */
 PeasyCam cam;
 Minim minim;
-AudioPlayer player;
+AudioPlayer soundtrack_player = null;
+AudioPlayer enter_sound_player = null;
 float time_background;
 float x1 (float t){
   return sin(t/10)*500 - tan(t/20)*200;
@@ -125,9 +126,9 @@ void setup() {
   cam.setMinimumDistance(50);
   cam.setMaximumDistance(500);
   minim=new Minim(this);
-  //player=minim.loadFile("multitrack.wav");
-  //player.play();
-  //player.loop();
+  //soundtrack_player=minim.loadFile("multitrack.wav");
+  //soundtrack_player.play();
+  //soundtrack_player.loop();
   
   
   oscP5 = new OscP5(this, 4321);
@@ -172,54 +173,54 @@ void draw() {
       pushMatrix();
       translate(width/8,height/2);
       scale(0.3,0.3);
-      for(int j=0; j<player.bufferSize()-1; j++){
-      
-      strokeWeight(abs(1+player.right.get(j)*100));
-      
-     
+      for(int j=0; j<soundtrack_player.bufferSize()-1; j++){
+        strokeWeight(abs(1+soundtrack_player.right.get(j)*100));
       }
+      
     
       for (int i=0; i<90; i++){
-        strokeCap(ROUND);
         stroke(240, 98, 146); 
         rect(x1(time_background+i),y1(time_background+i),5,5);
         rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
-        stroke(179, 229, 252);
-        strokeWeight(0.3);
-        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
-        
-        
       }
       
-      
-      
-      popMatrix();
-       
-       
-      pushMatrix();
-      translate(7*width/8,height/2);
-      scale(0.3,0.3);
-      for(int j=0; j<player.bufferSize()-1; j++){
-      
-      strokeWeight(abs(1+player.right.get(j)*100));
-      
-     
-      }
-    
       for (int i=0; i<90; i++){
-        strokeCap(ROUND);
-        stroke(240, 98, 146); 
-        rect(x1(time_background+i),y1(time_background+i),5,5);
-        rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
-        stroke(179, 229, 252);
         strokeWeight(0.3);
+        strokeCap(ROUND);
+        stroke(179, 229, 252);
         line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
-            
       }
+     popMatrix();
+         
+         
+      pushMatrix();
+        translate(7*width/8,height/2);
+        scale(0.3,0.3);
+        
+        for(int j=0; j<soundtrack_player.bufferSize()-1; j++){
+        
+        strokeWeight(abs(1+soundtrack_player.right.get(j)*100));
+        
+       
+        }
       
-      time_background+=0.03;
-      
-      popMatrix(); 
+        for (int i=0; i<90; i++){
+         
+          stroke(240, 98, 146); 
+          rect(x1(time_background+i),y1(time_background+i),5,5);
+          rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
+        }
+        
+          for (int i=0; i<90; i++){
+            strokeWeight(0.3);
+            stroke(179, 229, 252);
+            strokeCap(ROUND);
+            line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+             }
+        
+        time_background+=0.03;
+        
+     popMatrix(); 
     }
   }
   else if(PHOTO){
@@ -378,18 +379,19 @@ void keyPressed(){
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getEnergy()); //prendo l'energy dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getSpeechiness());  //prendo la speechiness dagli ultimi valori aggiunti
-        //my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
-        //my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
-        //my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
+        my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
+        my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
+        my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
+        my_message.add(current_n_users % n_max_users); //prendo il numero dell'utente attuale
         my_message.add(str(participants_spotify_values.size()) + "_face.jpg");
   
         /* Send photo and params to style_transfer script */
         oscP5.send(my_message, local_server);
         
         minim=new Minim(this);
-        player=minim.loadFile("sound11.wav");
-        player.play();
-        player.loop();
+        
+        enter_sound_player = minim.loadFile("../../../python/sounds/enter_sound.wav");
+        enter_sound_player.play();
         
         
         waitStyleTransfer();

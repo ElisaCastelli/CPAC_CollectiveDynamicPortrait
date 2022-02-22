@@ -42,6 +42,15 @@ void waitStyleTransfer(){
     println("error: " + e);
   }
   
+  if (current_n_users == 1){
+    if (soundtrack_player != null){
+      soundtrack_player.pause();
+    }
+    soundtrack_player = minim.loadFile("../../../python/out/current_mix.wav");
+    soundtrack_player.play();
+    soundtrack_player.loop();
+  }
+  
   // change STATE
   PROCESSING = false;
   MAIN = true;
