@@ -44,7 +44,7 @@ float y2 (float t){
 // number of rows/columns of division
 int n_max_users = 9;
 //int n_images;
-int current_n_users = 1;
+int current_n_users = 0;
 int N_IMAGE_X;
 int N_IMAGE_Y;
 int total_parts;
@@ -103,57 +103,13 @@ void settings(){
   updatePortraitDimensions();
 }
 
-
-void updatePortraitDimensions(){
-    switch(current_n_users){
-    case 1:
-      N_IMAGE_X=1;
-      N_IMAGE_Y=1;
-    break;
-    case 2:
-      N_IMAGE_X=2;
-      N_IMAGE_Y=1;
-    break;
-    case 3:
-      N_IMAGE_X=1;
-      N_IMAGE_Y=3;
-    break;
-    case 4:
-      N_IMAGE_X=2;
-      N_IMAGE_Y=2;
-    break;
-    case 5:
-      N_IMAGE_X=5;
-      N_IMAGE_Y=1;
-    break;
-    case 6:
-     N_IMAGE_X=3;
-     N_IMAGE_Y=2;
-    break;
-    case 7:
-     N_IMAGE_X=1;
-     N_IMAGE_Y=7;
-     break;
-    case 8:
-     N_IMAGE_X=4;
-     N_IMAGE_Y=2;
-     break;
-    case 9:
-     N_IMAGE_X=3;
-     N_IMAGE_Y=3;
-     break;
-  }
-  
-  total_parts = N_IMAGE_X * N_IMAGE_Y;
-}
-
 void setup() {
   background(0);
   django_communication = new API_Client();
   django_communication.deleteAll(); //svuoto il database
   //size(displayWidth,displayHeight,P3D);
 
-  frameRate(24);
+  frameRate(1);
   timePast=millis();
   timeInterval=2000.0f;
   
@@ -202,8 +158,6 @@ void draw() {
   textAlign(CENTER);
   textFont(font);
   fill(255, 255, 255);
-  
-  
   
   //plot INSTRUCTION according to the actual STATE
   if (MAIN){
@@ -266,11 +220,13 @@ void draw() {
     }
   }
   else if(PHOTO){
+    //updatePortrait();
       println("take a photo");
       textSize(width/38);
       text("Press ENTER and say Cheese...!", width/2, 1.5 * height/12);
   }
   else if (PROCESSING){
+    //updatePortrait();
       println("relax");
       textSize(width/38);
       text("Now relax, take a look around, have a cup of tea, while we make some magic...", width/2, 1.5 * height/12);
@@ -293,18 +249,28 @@ void draw() {
   }
   
   
-  
-   transparency_2+=2;
-    tint(255, transparency_2);
-    // plot the portrait
-    for(int index=0; index<img.length;index++){
+  /* portrait fade in *//*
+  transparency_2+=2;
+  tint(255, transparency_2);
+  // plot the portrait
+  for(int y=0; y<N_IMAGE_X;y++){
+    for(int x=0;x<N_IMAGE_Y;x++){
+      // for now just follow sequential order
+      if (x == y)
+        image(small_images[x + total_parts*y],pos_image[x].x,pos_image[x].y);
+    }
+  }*/
+  //updateImg();
+  transparency_2+=2;
+  tint(255, transparency_2);
+  println("dentro for" +  N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " imglength" + small_images.length);
+  for(int index=0; index<img.length;index++){
       for(int image=0;image<img.length;image++){
         // for now just follow sequential order
         if (index == image)
           image(small_images[index + total_parts*image],pos_image[index].x,pos_image[index].y);
       }
     }
-  
   //plot title
   textSize(width/18);
   fill(255, 255, 255);
@@ -391,13 +357,13 @@ void keyPressed(){
         
         // for final project is better to wait for message from python server
         // wait until face file is created
-                
+        updatePortrait();        
         waitPhoto();
 
       }
       else if(PROCESSING){
         println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users);
-        
+        updatePortrait();
         my_message = new OscMessage("/style");
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getAcousticness()); //prendo l'acousticness dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getValence());  //prendo la valence dagli ultimi valori aggiunti

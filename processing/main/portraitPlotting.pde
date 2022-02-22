@@ -1,23 +1,23 @@
-/*
 void updatePortrait(){
   println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users);
   int img_height = displayHeight / 2;
   int img_width= displayHeight / 2;
   int lastPhotoExistent = 0; //tengo memorizzato l'indice dell'ultima presente
-  img=new PImage[total_parts];
+  updateImg();
   small_images=new PImage[total_parts*total_parts];
   //File dataFolder2 = new File(dataPath("/Users/elisacastelli/Documents/GitHub/CPAC_CollectiveDynamicPortrait/pictures"));
 
   println("img.length: " + img.length);
   if(current_n_users == 0){
-    for(int image=0; image < img.length; image++){
-      //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
-      img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
-      plotSmallImage(image, img_height, img_width);
-    }
+    println("caso 0");
+    img=new PImage[1];
+    //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
+    img[0]=loadImage("../../../pictures/" + "ghost_photo.jpg");
+    plotSmallImage(0, img_height, img_width);
   }
   
-  else if(current_n_users<total_parts){
+  /*else if(current_n_users<total_parts){
+    println("caso 1");
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
         lastPhotoExistent=image;
@@ -29,8 +29,10 @@ void updatePortrait(){
       }
       plotSmallImage(image, img_height, img_width);
     }
-  }
-  else if(current_n_users == total_parts){
+  }*/
+  else /*if(current_n_users == total_parts)*/{
+    println("caso 2");
+    println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " eee" + total_parts);
     for(int image=0; image < img.length; image++){
       if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
         img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1) + "_face" + ".jpg");
@@ -42,7 +44,8 @@ void updatePortrait(){
       }
       plotSmallImage(image, img_height, img_width);
     }
-  }else if (current_n_users > total_parts){
+  }/*else if (current_n_users > total_parts){
+    println("caso 3");
     for(int index=current_n_users - img.length; index<participants_spotify_values.size(); index++){
       int image = index % total_parts;    // usare il modulo è piu figo e leggibile
       if(fileExistsCaseSensitive("stylized"+str(index+1)+"_face"+".jpg")){
@@ -56,7 +59,7 @@ void updatePortrait(){
       plotSmallImage(image, img_height, img_width);
     }
 
-  }
+  }*/
 }
 
 void plotSmallImage(int image, int img_height, int img_width){
@@ -82,4 +85,55 @@ void plotSmallImage(int image, int img_height, int img_width){
     }
   }
 }
-*/
+
+void updatePortraitDimensions(){
+    switch(current_n_users){
+    case 0:
+      N_IMAGE_X=1;
+      N_IMAGE_Y=1;
+    break;
+    case 1:
+      N_IMAGE_X=1;
+      N_IMAGE_Y=1;
+    break;
+    case 2:
+      N_IMAGE_X=2;
+      N_IMAGE_Y=1;
+    break;
+    case 3:
+      N_IMAGE_X=3;
+      N_IMAGE_Y=1;
+    break;
+    case 4:
+      N_IMAGE_X=2;
+      N_IMAGE_Y=2;
+    break;
+    case 5:
+      N_IMAGE_X=5;
+      N_IMAGE_Y=1;
+    break;
+    case 6:
+     N_IMAGE_X=3;
+     N_IMAGE_Y=2;
+    break;
+    case 7:
+     N_IMAGE_X=7;
+     N_IMAGE_Y=1;
+     break;
+    case 8:
+     N_IMAGE_X=4;
+     N_IMAGE_Y=2;
+     break;
+    case 9:
+     N_IMAGE_X=3;
+     N_IMAGE_Y=3;
+     break;
+  }
+  
+  total_parts = N_IMAGE_X * N_IMAGE_Y;
+  updateImg();
+}
+
+void updateImg(){
+  img=new PImage[total_parts];
+}
