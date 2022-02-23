@@ -3,7 +3,6 @@ void updatePortrait(){
   int img_height = displayHeight / 2;
   int img_width= displayHeight / 2;
   int diff_users;
-  int lastPhotoExistent = 0; //tengo memorizzato l'indice dell'ultima presente
   if(MAIN)
     updateImg();
   small_images=new PImage[total_parts*total_parts];
@@ -36,23 +35,6 @@ void updatePortrait(){
       plotSmallImage(image, img_height, img_width);
     }
   } 
-  /*else if (current_n_users > total_parts) {
-    println("caso 3");
-    diff_users = current_n_users - total_parts;
-    println(N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " eee" + total_parts);
-    for(int image=0; image < total_parts; image++){
-      if (fileExistsCaseSensitive("stylized" + str(image+1) + "_face" + ".jpg")) {
-        img[image]=loadImage("../../../pictures/" + "stylized" + str(image+1 + diff_users) + "_face" + ".jpg");
-        //img[image]=loadImage(dataFolder2 + "/stylized" + str(image+1) + "_face" + ".jpg");
-      }
-      else { // tengo questo else per sicurezza ma se funziona puoi toglierlo
-        img[image]=loadImage("../../../pictures/" + "ghost_photo.jpg");
-        //img[image]=loadImage(dataFolder2 + "/ghost_photo.jpg");
-      }
-      plotSmallImage(image, img_height, img_width);
-    }
-
-  }*/
 }
 
 void plotSmallImage(int image, int img_height, int img_width){
@@ -129,4 +111,77 @@ void updatePortraitDimensions(){
 
 void updateImg(){
   img=new PImage[total_parts];
+}
+
+
+/* BACKGROUND PLOTTING */
+
+float x1 (float t){
+  return sin(t/10)*500 - tan(t/20)*200;
+}
+
+float y1 (float t){
+  return tan(-t/20)*300+sin(t/20)*200;
+}
+
+float x2 (float t){
+  return sin(t/10)*500+ tan(t/10)*200;
+}
+
+float y2 (float t){
+  return -cos(t/20)*300+ cos(t/12)*20;
+}
+
+void plotBackground(){
+        pushMatrix();
+      translate(width/8,height/2);
+      scale(0.3,0.3);
+      for(int j=0; j<soundtrack_player.bufferSize()-1; j++){
+        strokeWeight(abs(1+soundtrack_player.right.get(j)*100));
+      }
+      
+    
+      for (int i=0; i<90; i++){
+        stroke(240, 98, 146); 
+        rect(x1(time_background+i),y1(time_background+i),5,5);
+        rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
+      }
+      
+      for (int i=0; i<90; i++){
+        strokeWeight(0.3);
+        strokeCap(ROUND);
+        stroke(179, 229, 252);
+        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+      }
+     popMatrix();
+         
+         
+      pushMatrix();
+        translate(7*width/8,height/2);
+        scale(0.3,0.3);
+        
+        for(int j=0; j<soundtrack_player.bufferSize()-1; j++){
+        
+        strokeWeight(abs(1+soundtrack_player.right.get(j)*100));
+        
+       
+        }
+      
+        for (int i=0; i<90; i++){
+         
+          stroke(240, 98, 146); 
+          rect(x1(time_background+i),y1(time_background+i),5,5);
+          rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
+        }
+        
+          for (int i=0; i<90; i++){
+            strokeWeight(0.3);
+            stroke(179, 229, 252);
+            strokeCap(ROUND);
+            line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
+             }
+        
+        time_background+=0.03;
+        
+     popMatrix(); 
 }

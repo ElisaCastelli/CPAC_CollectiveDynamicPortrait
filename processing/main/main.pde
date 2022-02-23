@@ -1,15 +1,3 @@
-/*
-NOTE
-
-quadro sempre presente, all'inizio cornice vuota
-
-STATI:
-- MAIN - scan the qr code and click to join (confronta ultimi valori di spotify con quello appena arrivato, se non sono arrivati nuovi stampa avviso)
-- PHOTO - acquisizione foto
-- PROCESSING - run style transfer
-
-*/
-
 import oscP5.*;
 import netP5.*;
 import processing.video.*;
@@ -21,24 +9,8 @@ PeasyCam cam;
 Minim minim;
 AudioPlayer soundtrack_player = null;
 AudioPlayer enter_sound_player = null;
+
 float time_background;
-float x1 (float t){
-  return sin(t/10)*500 - tan(t/20)*200;
-}
-
-float y1 (float t){
-  return tan(-t/20)*300+sin(t/20)*200;
-}
-
-float x2 (float t){
-  return sin(t/10)*500+ tan(t/10)*200;
-}
-
-float y2 (float t){
-  return -cos(t/20)*300+ cos(t/12)*20;
-}
-
-
 
 /* image plot and division */
 
@@ -108,7 +80,6 @@ void setup() {
   background(0);
   django_communication = new API_Client();
   django_communication.deleteAll(); //svuoto il database
-  //size(displayWidth,displayHeight,P3D);
 
   frameRate(24);
   timePast=millis();
@@ -119,17 +90,12 @@ void setup() {
   frame_w = int(1.53* height/2);
   frame.resize(frame_w, frame_h);
   total_parts = N_IMAGE_X * N_IMAGE_Y;
-  //n_images = current_n_users;
   
   /* background */
   cam=new PeasyCam(this,180);
   cam.setMinimumDistance(50);
   cam.setMaximumDistance(500);
   minim=new Minim(this);
-  //soundtrack_player=minim.loadFile("multitrack.wav");
-  //soundtrack_player.play();
-  //soundtrack_player.loop();
-  
   
   oscP5 = new OscP5(this, 4321);
   font =createFont("GOGOIA-Regular.ttf",200);
@@ -153,9 +119,6 @@ void textFade(){
 void draw() {
   //set common parameters
   background(0);
-  //noStroke();
-  //fill(255, 255, 255);
-  //rect(0,0, width, height/7);
   textAlign(CENTER);
   textFont(font);
   fill(255, 255, 255);
@@ -169,62 +132,11 @@ void draw() {
     fill(255, 255, 255, textAlpha);
     text("Scan the QR and press enter to join", width/2, 1.5 * height/12);
     
-    if  (participants_spotify_values.size() > 0){
-      pushMatrix();
-      translate(width/8,height/2);
-      scale(0.3,0.3);
-      for(int j=0; j<soundtrack_player.bufferSize()-1; j++){
-        strokeWeight(abs(1+soundtrack_player.right.get(j)*100));
-      }
-      
-    
-      for (int i=0; i<90; i++){
-        stroke(240, 98, 146); 
-        rect(x1(time_background+i),y1(time_background+i),5,5);
-        rect(x1(time_background+i)+width/2,y1(time_background+i),5,5);
-      }
-      
-      for (int i=0; i<90; i++){
-        strokeWeight(0.3);
-        strokeCap(ROUND);
-        stroke(179, 229, 252);
-        line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
-      }
-     popMatrix();
-         
-         
-      pushMatrix();
-        translate(7*width/8,height/2);
-        scale(0.3,0.3);
-        
-        for(int j=0; j<soundtrack_player.bufferSize()-1; j++){
-        
-        strokeWeight(abs(1+soundtrack_player.right.get(j)*100));
-        
-       
-        }
-      
-        for (int i=0; i<90; i++){
-         
-          stroke(240, 98, 146); 
-          rect(x1(time_background+i),y1(time_background+i),5,5);
-          rect(x1(time_background+i)-width/2,y1(time_background+i),5,5);
-        }
-        
-          for (int i=0; i<90; i++){
-            strokeWeight(0.3);
-            stroke(179, 229, 252);
-            strokeCap(ROUND);
-            line(x1(time_background+i),y1(time_background+i),x2(time_background+i),y2(time_background+i));
-             }
-        
-        time_background+=0.03;
-        
-     popMatrix(); 
+    if  (! error_generic && participants_spotify_values.size() > 0){
+      plotBackground();  
     }
   }
   else if(PHOTO){
-    //updatePortrait();
       println("take a photo");
       textSize(width/38);
       text("Press ENTER and say Cheese...!", width/2, 1.5 * height/12);
@@ -252,19 +164,14 @@ void draw() {
       text("remember to scan the qr", 7 * width/8, height/9);
   }
   
+  if (error_generic){
+      textFont(font);
+      textSize(width/45);
+      fill(255, 204, 128);
+      text("a problem occourred...", width/8, height/7);
+      text("...returned to main screen", width/8, height/5.5);
+  }
   
-  /* portrait fade in *//*
-  transparency_2+=2;
-  tint(255, transparency_2);
-  // plot the portrait
-  for(int y=0; y<N_IMAGE_X;y++){
-    for(int x=0;x<N_IMAGE_Y;x++){
-      // for now just follow sequential order
-      if (x == y)
-        image(small_images[x + total_parts*y],pos_image[x].x,pos_image[x].y);
-    }
-  }*/
-  //updateImg();
   transparency_2+=2;
   tint(255, transparency_2);
   println("dentro for" +  N_IMAGE_X + " " + N_IMAGE_Y + " " + current_n_users + " imglength" + img.length);
@@ -364,7 +271,6 @@ void keyPressed(){
         my_message.add(participants_spotify_values.size());
         oscP5.send(my_message, local_server);
         
-        // for final project is better to wait for message from python server
         // wait until face file is created
         //updatePortrait();        
         waitPhoto();
@@ -382,7 +288,7 @@ void keyPressed(){
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getTempo()); //prendo il tempo dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getDanceability());  //prendo la danceability dagli ultimi valori aggiunti
         my_message.add((participants_spotify_values.get(participants_spotify_values.size()-1)).getMode()); //prendo il mode dagli ultimi valori aggiunti
-        my_message.add(current_n_users % n_max_users); //prendo il numero dell'utente attuale
+        my_message.add(current_n_users); //prendo il numero dell'utente attuale
         my_message.add(str(participants_spotify_values.size()) + "_face.jpg");
   
         /* Send photo and params to style_transfer script */
