@@ -33,7 +33,7 @@ def take_photo(filename='photo.jpg', quality=0.8):
 
 # sometimes no face is detected, so we make the program try again, 
 face_found = False
-max_attempts = 5
+max_attempts = 8
 
 while face_found == False:
   # taking photo

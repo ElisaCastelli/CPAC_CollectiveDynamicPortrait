@@ -195,9 +195,12 @@ if __name__=="__main__":
     
     if n_user > max_n_user:
         mix_already_completed = True
-        n_user = n_user % max_n_user
+        while n_user > max_n_user:
+            n_user = n_user - max_n_user
+        print("n_users" + str(n_user) + "max" + str(max_n_user))
     else:
         mix_already_completed = False
+        print("provano" + str(n_user))
 
     NUM_M = 2
     START_SEQUENCE = "M"*NUM_M
@@ -207,7 +210,7 @@ if __name__=="__main__":
 
     samples=[composers[n_user]()]
     grammars=[composer_grammars[n_user]()]
-    gains = [1, 1, 1, 1]
+    gains = [0.5, 1, 0.5, 1]
     
     tracks=[]
     single_track = []
@@ -234,7 +237,7 @@ if __name__=="__main__":
         else:
             final_mix += wav_file
     # balance final gain according to number of tracks (if I mix before, maybe not needed)
-    # final_mix = final_mix / n_user
+    final_mix = final_mix / n_user
 
     # soundfile.write(file, data, samplerate, subtype=None, endian=None, format=None, closefd=True)
     sf.write("out/current_mix.wav", final_mix, sample_rate)
