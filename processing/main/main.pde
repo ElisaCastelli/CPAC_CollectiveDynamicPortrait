@@ -76,6 +76,27 @@ void settings(){
   updatePortraitDimensions();
 }
 
+// Boids
+int xspacing = 16;
+int w;
+float amplitude = 150.0;
+float period = 250.0;
+float dx;
+float[] x0values;
+float[] y0values;
+float[] x1values;
+float[] y1values;
+float[] x2values;
+float[] y2values;
+int initNum = 1000;
+Flock path0;
+Flock path1;
+Flock path2;
+Flock path3;
+Flock path4;
+Flock path5;
+ArrayList<Boid> vehicles;
+
 void setup() {
   background(0);
   django_communication = new API_Client();
@@ -106,6 +127,24 @@ void setup() {
   // ping
   my_message = new OscMessage("/ping");
   oscP5.send(my_message, local_server);
+  
+  // boids
+  w = width+xspacing;
+  dx = (TWO_PI/period)*xspacing;
+  x0values = new float[w/xspacing];
+  y0values = new float[w/xspacing];
+  x1values = new float[w/xspacing];
+  y1values = new float[w/xspacing];
+  x2values = new float[w/xspacing];
+  y2values = new float[w/xspacing];
+  
+  calcWave();
+  renderWave();
+  
+  vehicles = new ArrayList<Boid>();
+  for (int i1=1; i1<initNum; i1++) {
+    newBoid(random(width), random(height));
+  }
 }
 
 void textFade(){
@@ -133,7 +172,44 @@ void draw() {
     text("Scan the QR and press enter to join", width/2, 1.5 * height/12);
     
     if  (! error_generic && participants_spotify_values.size() > 0){
-      plotBackground();  
+      //plotBackground();
+      int c = 0;
+      for (Boid v : vehicles) {
+        if (c < (initNum/(current_n_users+1)) && current_n_users >= 1)
+        {
+          v.applyBehaviors(vehicles, path0);
+          v.run(255, 0, 0);
+        }
+        else if (c >= (initNum/(current_n_users+1)) && c < (initNum*2/(current_n_users+1)) && current_n_users >= 2)
+        {
+          v.applyBehaviors(vehicles, path1);
+          v.run(255, 255, 255);
+        }
+        else if (c >= (initNum*2/(current_n_users+1)) && c < (initNum*3/(current_n_users+1)) && current_n_users >= 3)
+        {
+          v.applyBehaviors(vehicles, path2);
+          v.run(255, 255, 0);
+        }
+        else if (c >= (initNum*3/(current_n_users+1)) && c < (initNum*4/(current_n_users+1)) && current_n_users >= 4)
+        {
+          v.applyBehaviors(vehicles, path3);
+          v.run(0, 255, 255);
+        }
+        else if (c >= (initNum*4/(current_n_users+1)) && c < (initNum*5/(current_n_users+1)) && current_n_users >= 5)
+        {
+          v.applyBehaviors(vehicles, path4);
+          v.run(255, 0, 255);
+        }
+        else
+        {
+          if (current_n_users != 0)
+          {
+            v.applyBehaviors(vehicles, path5);
+            v.run(0, 255, 0);
+          }
+        }
+        c++;
+      }
     }
   }
   else if(PHOTO){
@@ -192,11 +268,15 @@ void draw() {
   tint(255, transparency);
   image(frame,pos_image[0].x- frame.width/5.7, pos_image[0].y- frame.width/11);
   
-  
-  
   //plot QR code
   QR = loadImage("QR_heroku.png");
   image(QR, 11 * width/12, 10*height/12, width/15, width/15);
+}
+
+void newBoid (float x, float y) {
+  float maxspeed = random(2, 4);
+  float maxforce = 0.3;
+  vehicles.add(new Boid(new PVector(x, y), maxspeed, maxforce));
 }
 
 void keyPressed(){
@@ -322,4 +402,68 @@ void oscEvent(OscMessage OSC_message_received) {
     pong = OSC_message_received.get(0).stringValue();
   }
   
+}
+
+void calcWave() {
+  float x = 0.0;
+  for (int i=0; i<x1values.length; i++) {
+    x0values[i] = cos(x)*amplitude/2;
+    y0values[i] = sin(x)*amplitude/2;
+    x1values[i] = sin(x-10)*350 - tan(x/6)*20;
+    y1values[i] = tan(-x/3+40)*40 + sin(x)*100;
+    x2values[i] = sin(x+40)*50 + tan(x/2.5)*20;
+    y2values[i] = -cos(x/2)*240 + cos(x*2)*160;
+    
+    x += dx;
+  }
+}
+
+void renderWave() {
+  path0 = new Flock();
+  path1 = new Flock();
+  path2 = new Flock();
+  path3 = new Flock();
+  path4 = new Flock();
+  path5 = new Flock();
+  
+  noStroke();
+  fill(0);
+  for (int x=0; x<x1values.length; x++) {
+    path0.addPoint(x*xspacing, height/4+x0values[x]);
+    path1.addPoint(x*xspacing, height/2+x1values[x]);
+    path2.addPoint(x*xspacing, height/2+y1values[x]);
+    path3.addPoint(x*xspacing, height/2+x2values[x]);
+    path4.addPoint(x*xspacing, height/2+y2values[x]);
+    path5.addPoint(x*xspacing, height*3/4+y0values[x]);
+  }
+    
+  path0.addPoint(width+xspacing*2, height/2);
+  path0.addPoint(width+xspacing*2, -xspacing*2);
+  path0.addPoint(-xspacing*2, -xspacing*2);
+  path0.addPoint(-xspacing*2, height/2);
+  
+  path1.addPoint(width+xspacing*2, height);
+  path1.addPoint(width+xspacing*2, -xspacing*2);
+  path1.addPoint(-xspacing*2, -xspacing*2);
+  path1.addPoint(-xspacing*2, height);
+  
+  path2.addPoint(width+xspacing*2, height/2);
+  path2.addPoint(width+xspacing*2, -xspacing*2);
+  path2.addPoint(-xspacing*2, -xspacing*2);
+  path2.addPoint(-xspacing*2, height/2);
+  
+  path3.addPoint(width+xspacing*2, height/2);
+  path3.addPoint(width+xspacing*2, -xspacing*2);
+  path3.addPoint(-xspacing*2, -xspacing*2);
+  path3.addPoint(-xspacing*2, height/2);
+  
+  path4.addPoint(width+xspacing*2, height/2);
+  path4.addPoint(width+xspacing*2, -xspacing*2);
+  path4.addPoint(-xspacing*2, -xspacing*2);
+  path4.addPoint(-xspacing*2, height/2);
+  
+  path5.addPoint(width+xspacing*2, height/2);
+  path5.addPoint(width+xspacing*2, -xspacing*2);
+  path5.addPoint(-xspacing*2, -xspacing*2);
+  path5.addPoint(-xspacing*2, height/2);
 }
