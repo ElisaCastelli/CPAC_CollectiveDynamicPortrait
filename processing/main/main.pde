@@ -79,8 +79,10 @@ void settings(){
 // Boids
 int xspacing = 16;
 int w;
-float amplitude = 150.0;
-float period = 250.0;
+int ene = 150;
+float amplitude;
+int tem = 250;
+float period;
 float dx;
 float[] x0values;
 float[] y0values;
@@ -130,7 +132,6 @@ void setup() {
   
   // boids
   w = width+xspacing;
-  dx = (TWO_PI/period)*xspacing;
   x0values = new float[w/xspacing];
   y0values = new float[w/xspacing];
   x1values = new float[w/xspacing];
@@ -173,43 +174,64 @@ void draw() {
     
     if  (! error_generic && participants_spotify_values.size() > 0){
       //plotBackground();
+      
+      int aco = (int)participants_spotify_values.get(participants_spotify_values.size()-1).getAcousticness();
+      int val = (int)participants_spotify_values.get(participants_spotify_values.size()-1).getValence();
+      ene = (int)participants_spotify_values.get(participants_spotify_values.size()-1).getEnergy();
+      int spe = (int)participants_spotify_values.get(participants_spotify_values.size()-1).getSpeechiness();
+      tem = (int)participants_spotify_values.get(participants_spotify_values.size()-1).getTempo();
+      int dan = (int)participants_spotify_values.get(participants_spotify_values.size()-1).getDanceability();
+      
+      aco = ((aco+1)*255/2)/2;
+      val = ((val+1)*255/2)/2;
+      ene = ((ene+1)*255/2)/2;
+      spe = ((spe+1)*255/2)/2;
+      dan = ((dan+1)*255/2)/2;
+      
+      if (tem > 255/2) tem = 255/2;
+      
+      // r: tem/val
+      // g: dan/spe
+      // b: aco/ene
+      
       int c = 0;
       for (Boid v : vehicles) {
         if (c < (initNum/(current_n_users+1)) && current_n_users >= 1)
         {
           v.applyBehaviors(vehicles, path0);
-          v.run(255, 0, 0);
+          v.run((tem+val), (dan+spe)/2, (aco+ene)/2);
         }
         else if (c >= (initNum/(current_n_users+1)) && c < (initNum*2/(current_n_users+1)) && current_n_users >= 2)
         {
           v.applyBehaviors(vehicles, path1);
-          v.run(255, 255, 255);
+          v.run((tem+val), (dan+spe), (aco+ene));
         }
         else if (c >= (initNum*2/(current_n_users+1)) && c < (initNum*3/(current_n_users+1)) && current_n_users >= 3)
         {
           v.applyBehaviors(vehicles, path2);
-          v.run(255, 255, 0);
+          v.run((tem+val), (dan+spe), (aco+ene)/2);
         }
         else if (c >= (initNum*3/(current_n_users+1)) && c < (initNum*4/(current_n_users+1)) && current_n_users >= 4)
         {
           v.applyBehaviors(vehicles, path3);
-          v.run(0, 255, 255);
+          v.run((tem+val)/2, (dan+spe), (aco+ene));
         }
         else if (c >= (initNum*4/(current_n_users+1)) && c < (initNum*5/(current_n_users+1)) && current_n_users >= 5)
         {
           v.applyBehaviors(vehicles, path4);
-          v.run(255, 0, 255);
+          v.run((tem+val), (dan+spe)/2, (aco+ene));
         }
         else
         {
           if (current_n_users != 0)
           {
             v.applyBehaviors(vehicles, path5);
-            v.run(0, 255, 0);
+            v.run((tem+val)/2, (dan+spe), (aco+ene)/2);
           }
         }
         c++;
       }
+      
     }
   }
   else if(PHOTO){
@@ -274,7 +296,7 @@ void draw() {
 }
 
 void newBoid (float x, float y) {
-  float maxspeed = random(2, 4);
+  float maxspeed = random(4, 8);
   float maxforce = 0.3;
   vehicles.add(new Boid(new PVector(x, y), maxspeed, maxforce));
 }
@@ -405,14 +427,17 @@ void oscEvent(OscMessage OSC_message_received) {
 }
 
 void calcWave() {
+  period = tem;
+  amplitude = ene;
+  dx = (TWO_PI/period)*xspacing;
   float x = 0.0;
   for (int i=0; i<x1values.length; i++) {
     x0values[i] = cos(x)*amplitude/2;
     y0values[i] = sin(x)*amplitude/2;
-    x1values[i] = sin(x-10)*350 - tan(x/6)*20;
+    x1values[i] = -cos(x/2)*240 + cos(x*2)*160;
     y1values[i] = tan(-x/3+40)*40 + sin(x)*100;
     x2values[i] = sin(x+40)*50 + tan(x/2.5)*20;
-    y2values[i] = -cos(x/2)*240 + cos(x*2)*160;
+    y2values[i] = sin(x-10)*350 - tan(x/6)*20;
     
     x += dx;
   }
@@ -462,7 +487,7 @@ void renderWave() {
   path4.addPoint(-xspacing*2, -xspacing*2);
   path4.addPoint(-xspacing*2, height/2);
   
-  path5.addPoint(width+xspacing*2, height/2);
+  path5.addPoint(width+xspacing*2, height*3/4);
   path5.addPoint(width+xspacing*2, -xspacing*2);
   path5.addPoint(-xspacing*2, -xspacing*2);
   path5.addPoint(-xspacing*2, height/2);
